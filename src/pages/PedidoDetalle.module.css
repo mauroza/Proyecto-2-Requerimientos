@@ -1,0 +1,91 @@
+.container {
+  flex: 1;
+  background-color: #ffffff;
+  margin: 20px;
+  border-radius: 4px;
+  padding: 32px 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin-bottom: 28px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.tabla {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  background-color: #e4e4e4;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.label {
+  flex: 0 0 200px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #444;
+  font-weight: 500;
+  border-right: 1px solid #cccccc;
+}
+
+.valor {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #222;
+  background-color: #ebebeb;
+}
+
+.recoleccion {
+  color: #00897b;
+  font-weight: 600;
+}
+
+.recibido {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.btnVolver {
+  margin-top: 28px;
+  background-color: #1a3a8c;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 2px;
+  align-self: flex-start;
+  transition: background-color 0.15s ease;
+}
+
+.btnVolver:hover {
+  background-color: #162f72;
+}
