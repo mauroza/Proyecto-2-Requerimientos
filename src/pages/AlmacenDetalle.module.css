@@ -27,7 +27,7 @@
   background-color: #1a3a8c;
   color: #ffffff;
   border: none;
-  padding: 10px 24px;
+  padding: 12px 28px;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -374,4 +374,23 @@
 .entransporte {
   background-color: #fff3e0;
   color: #e65100;
+}
+
+.btnVolver {
+  background-color: #d0d0d0;
+  color: #333;
+  border: 1px solid #999;
+  padding: 12px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  align-self: center;
+  min-width: 200px;
+  margin-top: 24px;
+}
+
+.btnVolver:hover {
+  background-color: #b8b8b8;
 }

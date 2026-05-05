@@ -4,6 +4,7 @@ import PedidoDetalle from './Pedidodetalle';
 import CrearPedido from './CrearPedido';
 import EditarPedido from './EditarPedido';
 import { usePedidos } from '../hooks/usePedidos';
+import { useAlmacenes } from '../hooks/useAlmacenes';
 
 const ESTADOS = ['EN RECOLECCION', 'EN TRANSPORTE', 'RECIBIDO'];
 
@@ -16,6 +17,7 @@ export default function Pedidos() {
   const [modalCancelar, setModalCancelar] = useState(null); // id del pedido
 
   const { pedidos, agregarPedido, actualizarEstado, editarPedido, toggleCheck, toggleAll } = usePedidos();
+  const { almacenes } = useAlmacenes();
 
   const allChecked = pedidos.filter(p => p.estado !== 'CANCELADO' && p.estado !== 'RECIBIDO').every((p) => p.checked);
 
@@ -36,10 +38,10 @@ export default function Pedidos() {
     return <PedidoDetalle pedido={pedidoSeleccionado} onVolver={() => setPedidoSeleccionado(null)} />;
   }
   if (creando) {
-    return <CrearPedido onVolver={() => setCreando(false)} onCrear={handleCrear} totalPedidos={pedidos.length} />;
+    return <CrearPedido onVolver={() => setCreando(false)} onCrear={handleCrear} totalPedidos={pedidos.length} almacenes={almacenes} />;
   }
   if (editando) {
-    return <EditarPedido pedido={editando} onVolver={() => setEditando(null)} onGuardar={(p) => { editarPedido(p); setEditando(null); }} />;
+    return <EditarPedido pedido={editando} onVolver={() => setEditando(null)} onGuardar={(p) => { editarPedido(p); setEditando(null); }} almacenes={almacenes} />;
   }
 
   return (

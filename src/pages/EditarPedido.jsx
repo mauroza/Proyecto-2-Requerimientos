@@ -4,10 +4,9 @@ import styles from './CrearPedido.module.css';
 const productosOpciones = ['Yuca', 'Piña', 'Banano', 'Papaya', 'Mango'];
 const proveedoresOpciones = ['COLONO', 'AGROSANCARLOS', 'COOPEAGRI', 'DOS PINOS'];
 const puntosVentaOpciones = ['Punto SJ', 'Punto Pital', 'Punto Liberia', 'Punto Cartago'];
-const almacenesOpciones = ['Almacen San Carlos', 'Almacen Ciudad Quesada', 'Almacen Heredia'];
 const transporteOpciones = ['Mario Fernandez Hernandez', 'Carlos Mora Jimenez', 'Luis Rojas Vargas'];
 
-export default function EditarPedido({ pedido, onVolver, onGuardar }) {
+export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = [] }) {
   const [form, setForm] = useState({
     nombre: pedido.nombre || '',
     producto: pedido.producto || '',
@@ -73,7 +72,11 @@ export default function EditarPedido({ pedido, onVolver, onGuardar }) {
         onChange={(e) => handleChange(field, e.target.value)}
       >
         <option value="">seleccionar</option>
-        {opciones.map((o) => <option key={o} value={o}>{o}</option>)}
+        {opciones.map((o) => {
+          const valor = typeof o === 'string' ? o : o.nombre;
+          const clave = typeof o === 'string' ? o : o.id;
+          return <option key={clave} value={valor}>{valor}</option>;
+        })}
       </select>
     </div>
   );
@@ -105,7 +108,7 @@ export default function EditarPedido({ pedido, onVolver, onGuardar }) {
           {select('Proveedor', 'proveedor', proveedoresOpciones)}
           {select('Punto de venta', 'puntoVenta', puntosVentaOpciones)}
           {campo('Fecha Entrega (Proveedor)', 'fechaEntrega', 'date')}
-          {select('Almacén a entregar', 'almacen', almacenesOpciones)}
+          {select('Almacén a entregar', 'almacen', almacenes)}
           {select('Transporte a cargo', 'transporte', transporteOpciones)}
           {campo('Fecha de recoleccion de transporte', 'fechaRecoleccion', 'date')}
         </div>

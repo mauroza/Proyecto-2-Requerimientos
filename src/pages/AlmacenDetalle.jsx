@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { usePedidos } from '../hooks/usePedidos';
+import { useInventarios } from '../hooks/useInventarios';
+import PedidoDetalle from './PedidoDetalle';
 import styles from './AlmacenDetalle.module.css';
 
 // Datos quemados de inventario por almacén - se actualiza al recibir productos
@@ -11,9 +13,10 @@ const initialInventariosData = {
 
 export default function AlmacenDetalle({ almacen, onVolver }) {
   const [tabActivo, setTabActivo] = useState('inventario');
-  const [inventarios, setInventarios] = useState(initialInventariosData);
   const [modalRecibir, setModalRecibir] = useState(false);
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
   const { pedidos, actualizarEstado } = usePedidos();
+  const { inventarios, agregarProducto } = useInventarios();
   
   // Obtener inventario del almacén
   const inventario = inventarios[almacen.id] || [];
@@ -51,15 +54,14 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
 
   const handleRecibirProducto = (pedido) => {
     const nuevoProducto = crearProductoRecibido(pedido);
-
-    setInventarios((prev) => ({
-      ...prev,
-      [almacen.id]: [...(prev[almacen.id] || []), nuevoProducto]
-    }));
-
+    agregarProducto(almacen.id, nuevoProducto);
     actualizarEstado(pedido.id, 'RECIBIDO');
     setModalRecibir(false);
   };
+
+  if (pedidoSeleccionado) {
+    return <PedidoDetalle pedido={pedidoSeleccionado} onVolver={() => setPedidoSeleccionado(null)} />;
+  }
 
   return (
     <div className={styles.container}>
@@ -197,7 +199,7 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
                         <td className={styles.modalTdAcciones}>
                           <button 
                             className={styles.btnInfo}
-                            onClick={() => alert(`Producto: ${pedido.producto}\nCantidad: ${pedido.cantidad}`)}
+                            onClick={() => setPedidoSeleccionado(pedido)}
                           >
                             INFORMACIÓN
                           </button>

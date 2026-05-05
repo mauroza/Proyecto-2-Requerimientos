@@ -1,0 +1,109 @@
+.container {
+  flex: 1;
+  background-color: #ffffff;
+  margin: 20px;
+  border-radius: 4px;
+  padding: 32px 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 1px;
+  margin: 0 0 24px 0;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin: 0 0 32px 0;
+}
+
+.tabla {
+  background-color: #f9f9f9;
+  padding: 24px;
+  border-radius: 4px;
+  margin-bottom: 32px;
+  flex: 1;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.fila:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.label {
+  font-weight: 600;
+  color: #1a1a1a;
+  min-width: 200px;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+
+.valor {
+  color: #333;
+  font-size: 13px;
+  flex: 1;
+}
+
+.valor.activo {
+  background-color: #d4f1d4;
+  color: #2e7d32;
+  padding: 6px 12px;
+  border-radius: 2px;
+  display: inline-block;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.valor.mantenimiento {
+  background-color: #fff3e0;
+  color: #e65100;
+  padding: 6px 12px;
+  border-radius: 2px;
+  display: inline-block;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.valor.inactivo {
+  background-color: #ffebee;
+  color: #c0392b;
+  padding: 6px 12px;
+  border-radius: 2px;
+  display: inline-block;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.btnVolver {
+  background-color: #d0d0d0;
+  color: #333;
+  border: 1px solid #999;
+  padding: 12px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  align-self: center;
+  min-width: 200px;
+  margin-top: 24px;
+}
+
+.btnVolver:hover {
+  background-color: #b8b8b8;
+}

@@ -1,0 +1,177 @@
+.container {
+  flex: 1;
+  background-color: #ffffff;
+  margin: 20px;
+  border-radius: 4px;
+  padding: 32px 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 1px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin: 16px 0 24px 0;
+}
+
+.pasoContenido {
+  flex: 1;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fila {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: 0.2px;
+}
+
+.input {
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid #d0d0d0;
+  border-radius: 2px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #1a3a8c;
+  box-shadow: 0 0 0 2px rgba(26, 58, 140, 0.1);
+}
+
+.input.inputError {
+  border-color: #c0392b;
+  background-color: #ffebee;
+}
+
+.select {
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid #d0d0d0;
+  border-radius: 2px;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #1a3a8c;
+  box-shadow: 0 0 0 2px rgba(26, 58, 140, 0.1);
+}
+
+.productosContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.productosList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.productoBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #e8eef7;
+  color: #1a3a8c;
+  padding: 6px 12px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btnRemover {
+  background: none;
+  border: none;
+  color: #1a3a8c;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.btnRemover:hover {
+  color: #c0392b;
+}
+
+.errorMsg {
+  color: #c0392b;
+  font-size: 11px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.botones {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.btnVolver {
+  background-color: transparent;
+  border: 1px solid #d0d0d0;
+  color: #666;
+  padding: 12px 32px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.btnVolver:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.btnCrear {
+  background-color: #1a3a8c;
+  color: #ffffff;
+  border: none;
+  padding: 12px 32px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background-color 0.15s ease;
+}
+
+.btnCrear:hover {
+  background-color: #162f72;
+}

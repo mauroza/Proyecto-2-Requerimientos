@@ -1,0 +1,376 @@
+.container {
+  flex: 1;
+  background-color: #ffffff;
+  margin: 20px;
+  border-radius: 4px;
+  padding: 32px 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.btnPrimary {
+  background-color: #1a3a8c;
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background-color 0.15s ease;
+}
+
+.btnPrimary:hover {
+  background-color: #162f72;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.subtitulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.3px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #d0d0d0;
+  margin: 0 0 16px 0;
+}
+
+.hint {
+  font-size: 11px;
+  color: #666;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table thead {
+  background-color: #e8e8e8;
+}
+
+.table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #444;
+  border-bottom: 1px solid #d0d0d0;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #e8e8e8;
+  color: #333;
+}
+
+.table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.thCheck {
+  width: 50px;
+  text-align: center;
+}
+
+.tdCheck {
+  text-align: center;
+}
+
+.checkbox {
+  cursor: pointer;
+}
+
+.tdNombre {
+  color: #1a3a8c;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.tdNombre:hover {
+  color: #0f2555;
+}
+
+.verLista {
+  color: #1a3a8c;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.verLista:hover {
+  color: #0f2555;
+}
+
+.thFiltros {
+  text-align: center;
+}
+
+.filtrosLink {
+  color: #1a3a8c;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.filtrosLink:hover {
+  color: #0f2555;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.activo {
+  background-color: #d4f1d4;
+  color: #2e7d32;
+}
+
+.mantenimiento {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.inactivo {
+  background-color: #ffebee;
+  color: #c0392b;
+}
+
+.badgeClickable {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.badgeClickable:hover {
+  transform: scale(1.05);
+}
+
+.tdAcciones {
+  display: flex;
+  gap: 8px;
+}
+
+.actionBtn {
+  background-color: transparent;
+  border: 1px solid #1a3a8c;
+  color: #1a3a8c;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.actionBtn:hover {
+  background-color: #1a3a8c;
+  color: #ffffff;
+}
+
+.actionBtnEliminar {
+  background-color: transparent;
+  border: 1px solid #c0392b;
+  color: #c0392b;
+  padding: 4px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.actionBtnEliminar:hover {
+  background-color: #c0392b;
+  color: #ffffff;
+}
+
+.vacio {
+  text-align: center;
+  color: #999;
+  padding: 24px !important;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 90%;
+  padding: 32px;
+}
+
+.modalTitulo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  padding: 0;
+}
+
+.modalSub {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 20px 0;
+}
+
+.modalForm {
+  margin-bottom: 24px;
+}
+
+.campo {
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid #d0d0d0;
+  border-radius: 2px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #1a3a8c;
+  box-shadow: 0 0 0 2px rgba(26, 58, 140, 0.1);
+}
+
+.modalBotones {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btnCancelar {
+  background-color: transparent;
+  border: 1px solid #d0d0d0;
+  color: #666;
+  padding: 10px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.btnCancelar:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.btnGuardar {
+  background-color: #1a3a8c;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background-color 0.15s ease;
+}
+
+.btnGuardar:hover {
+  background-color: #162f72;
+}
+
+.modalOpciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.modalOpcion {
+  background-color: transparent;
+  border: 1px solid #1a3a8c;
+  color: #1a3a8c;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.modalOpcion:hover {
+  background-color: #e8eef7;
+}
+
+.modalCerrar {
+  width: 100%;
+  background-color: transparent;
+  border: 1px solid #d0d0d0;
+  color: #666;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.modalCerrar:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}

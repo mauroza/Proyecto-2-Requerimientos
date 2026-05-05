@@ -4,7 +4,6 @@ import styles from './CrearPedido.module.css';
 const productosOpciones = ['Yuca', 'Piña', 'Banano', 'Papaya', 'Mango'];
 const proveedoresOpciones = ['COLONO', 'AGROSANCARLOS', 'COOPEAGRI', 'DOS PINOS'];
 const puntosVentaOpciones = ['Punto SJ', 'Punto Pital', 'Punto Liberia', 'Punto Cartago'];
-const almacenesOpciones = ['Almacen San Carlos', 'Almacen Ciudad Quesada', 'Almacen Heredia'];
 const transporteOpciones = ['Mario Fernandez Hernandez', 'Carlos Mora Jimenez', 'Luis Rojas Vargas'];
 const unidadesOpciones = ['kg', 'lb', 'unidades', 'cajas'];
 
@@ -15,7 +14,7 @@ const PASOS = [
   { titulo: 'Logística', campos: ['almacen', 'transporte', 'fechaRecoleccion'] },
 ];
 
-export default function CrearPedido({ onVolver, onCrear, totalPedidos }) {
+export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes = [] }) {
   const [paso, setPaso] = useState(0);
   const [form, setForm] = useState({
     nombre: '', producto: '', cantidad: '', unidad: 'kg',
@@ -207,7 +206,7 @@ export default function CrearPedido({ onVolver, onCrear, totalPedidos }) {
                   onChange={(e) => handleChange('almacen', e.target.value)}
                 >
                   <option value="">seleccionar almacén</option>
-                  {almacenesOpciones.map((o) => <option key={o} value={o}>{o}</option>)}
+                  {almacenes.map((a) => <option key={a.id} value={a.nombre}>{a.nombre}</option>)}
                 </select>
               </div>
               <div className={styles.fila}>
