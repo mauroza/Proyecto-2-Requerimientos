@@ -168,6 +168,46 @@
   background-color: #fdecea !important;
 }
 
+.productosContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.productosList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.productoBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #d0d0d0;
+  border-radius: 2px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.btnRemover {
+  background: none;
+  border: none;
+  color: #c0392b;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+}
+
+.errorMsg {
+  margin: 6px 0 0;
+  color: #c0392b;
+  font-size: 11px;
+}
+
 /* Botones */
 .botones {
   display: flex;

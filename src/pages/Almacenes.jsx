@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import { useAlmacenes } from '../hooks/useAlmacenes';
+import { useInventarios } from '../hooks/useInventarios';
 import AlmacenDetalle from './AlmacenDetalle';
 import CrearAlmacen from './CrearAlmacen';
 import EditarAlmacen from './EditarAlmacen';
 import styles from './Almacenes.module.css';
 
 const ESTADOS = ['ACTIVO', 'MANTENIMIENTO', 'INACTIVO'];
+
+function calcularDisponibilidad(almacenId, capacidad, inventarios) {
+  const inventario = inventarios[almacenId] || [];
+  const capacidadTotal = parseInt(capacidad, 10) || 100;
+  const pesoTotal = inventario.reduce((sum, item) => sum + (parseInt(item.cantidad, 10) || 0), 0);
+  const porcentajeUsado = capacidadTotal ? Math.round((pesoTotal / capacidadTotal) * 100) : 0;
+  return Math.max(0, Math.min(100, 100 - porcentajeUsado));
+}
 
 export default function Almacenes() {
   const [modalFiltros, setModalFiltros] = useState(false);
@@ -16,9 +25,15 @@ export default function Almacenes() {
   const [modalEstado, setModalEstado] = useState(null);
 
   const { almacenes, agregarAlmacen, editarAlmacen, eliminarAlmacen, actualizarEstado, toggleCheck, toggleAll } = useAlmacenes();
+  const { inventarios } = useInventarios();
+
+  const almacenesConDisponibilidad = almacenes.map((a) => ({
+    ...a,
+    disponibilidad: calcularDisponibilidad(a.id, a.capacidad, inventarios)
+  }));
 
   // Aplicar filtros
-  const almacenesFiltrados = almacenes.filter((a) => {
+  const almacenesFiltrados = almacenesConDisponibilidad.filter((a) => {
     if (filtros.estado && a.estado !== filtros.estado) return false;
     if (filtros.disponibilidadMin && a.disponibilidad < Number(filtros.disponibilidadMin)) return false;
     if (filtros.disponibilidadMax && a.disponibilidad > Number(filtros.disponibilidadMax)) return false;

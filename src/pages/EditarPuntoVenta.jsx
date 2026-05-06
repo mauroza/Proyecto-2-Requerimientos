@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from './CrearPuntoVenta.module.css';
+import styles from './CrearAlmacen.module.css';
 
 const productosOpciones = ['Yuca', 'Piña', 'Banano', 'Papaya', 'Mango'];
 

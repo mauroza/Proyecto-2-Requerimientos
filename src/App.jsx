@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Pedidos from './pages/Pedidos';
 import Almacenes from './pages/Almacenes';
+import PuntosVenta from './pages/PuntosVenta';
 import Login from './pages/Login';
 import './index.css';
 import styles from './App.module.css';
@@ -10,6 +11,7 @@ function renderPage(page) {
   switch (page) {
     case 'pedidos': return <Pedidos />;
     case 'almacenes': return <Almacenes />;
+    case 'puntos': return <PuntosVenta />;
     default:
       return (
         <div className={styles.placeholder}>

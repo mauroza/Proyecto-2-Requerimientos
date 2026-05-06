@@ -89,11 +89,7 @@ export default function PuntosVenta() {
                 </td>
                 <td className={styles.tdNombre} onClick={() => setPuntoVentaSeleccionado(p)}>{p.nombre}</td>
                 <td>{p.direccion.length > 25 ? p.direccion.slice(0, 23) + '...' : p.direccion}</td>
-                <td>
-                  <span className={styles.verLista} onClick={() => setPuntoVentaSeleccionado(p)}>
-                    VER LISTA
-                  </span>
-                </td>
+                <td>{p.productosNegociados.length > 0 ? p.productosNegociados.join(', ') : 'Sin productos'}</td>
                 <td>{p.fechaDepartamento}</td>
                 <td>{p.fechaRecogedor}</td>
                 <td>
