@@ -55,11 +55,29 @@ export function useInventarios() {
     }));
   };
 
+  const descontarProductos = (almacenId, productosADescontar) => {
+    setInventarios((prev) => {
+      const inventarioActual = prev[almacenId] || [];
+      const actualizado = inventarioActual.reduce((acc, item) => {
+        const descuento = productosADescontar.find((p) => p.id === item.id);
+        if (!descuento) {
+          acc.push(item);
+        } else {
+          const nueva = item.cantidad - descuento.cantidad;
+          if (nueva > 0) acc.push({ ...item, cantidad: nueva });
+        }
+        return acc;
+      }, []);
+      return { ...prev, [almacenId]: actualizado };
+    });
+  };
+
   return {
     inventarios,
     agregarProducto,
     eliminarProducto,
     editarProducto,
+    descontarProductos,
     setInventarios
   };
 }

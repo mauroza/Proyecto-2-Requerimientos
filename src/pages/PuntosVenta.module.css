@@ -44,6 +44,55 @@
   background-color: #162f72;
 }
 
+/* Main tabs */
+.mainTabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 24px;
+}
+
+.mainTab {
+  background: none;
+  border: none;
+  padding: 10px 20px 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.mainTab:hover {
+  color: #1a3a8c;
+}
+
+.mainTabActivo {
+  color: #1a1a1a;
+  border-bottom-color: #1a3a8c;
+}
+
+.mainTabBadge {
+  background-color: #1a3a8c;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.filtrosActivos {
+  color: #c0392b;
+}
+
 .tableWrapper {
   overflow-x: hidden;
 }

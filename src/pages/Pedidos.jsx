@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './Pedidos.module.css';
-import PedidoDetalle from './Pedidodetalle';
+import PedidoDetalle from './PedidoDetalle';
 import CrearPedido from './CrearPedido';
 import EditarPedido from './EditarPedido';
 import { usePedidos } from '../hooks/usePedidos';
@@ -13,16 +13,27 @@ export default function Pedidos() {
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
   const [creando, setCreando] = useState(false);
   const [editando, setEditando] = useState(null);
-  const [modalEstado, setModalEstado] = useState(null); // id del pedido
-  const [modalCancelar, setModalCancelar] = useState(null); // id del pedido
+  const [modalEstado, setModalEstado] = useState(null);
+  const [modalCancelar, setModalCancelar] = useState(null);
+  const [modalFiltros, setModalFiltros] = useState(false);
+  const [filtros, setFiltros] = useState({ estado: '', proveedor: '' });
+  const [filtrosTemp, setFiltrosTemp] = useState({ estado: '', proveedor: '' });
 
   const { pedidos, agregarPedido, actualizarEstado, editarPedido, toggleCheck, toggleAll } = usePedidos();
   const { almacenes } = useAlmacenes();
 
-  const allChecked = pedidos.filter(p => p.estado !== 'CANCELADO' && p.estado !== 'RECIBIDO').every((p) => p.checked);
-
   const pedidosActivos = pedidos.filter(p => p.estado !== 'RECIBIDO' && p.estado !== 'CANCELADO');
   const pedidosHistorial = pedidos.filter(p => p.estado === 'RECIBIDO' || p.estado === 'CANCELADO');
+
+  const pedidosActivosFiltrados = pedidosActivos.filter(p => {
+    if (filtros.estado && p.estado !== filtros.estado) return false;
+    if (filtros.proveedor && !p.proveedor.toLowerCase().includes(filtros.proveedor.toLowerCase())) return false;
+    return true;
+  });
+
+  const hayFiltrosActivos = filtros.estado || filtros.proveedor;
+
+  const allChecked = pedidosActivosFiltrados.every((p) => p.checked);
 
   const handleCrear = (nuevoPedido) => {
     agregarPedido({ ...nuevoPedido, id: pedidos.length + 1 });
@@ -75,11 +86,18 @@ export default function Pedidos() {
                 <th>FECHA</th>
                 <th>PROVEEDOR</th>
                 <th>ESTADO</th>
-                <th className={styles.thFiltros}><span className={styles.filtrosLink}>FILTROS</span></th>
+                <th className={styles.thFiltros}>
+                  <span
+                    className={`${styles.filtrosLink} ${hayFiltrosActivos ? styles.filtrosActivos : ''}`}
+                    onClick={() => { setFiltrosTemp({ ...filtros }); setModalFiltros(true); }}
+                  >
+                    FILTROS {hayFiltrosActivos ? '●' : ''}
+                  </span>
+                </th>
               </tr>
             </thead>
             <tbody>
-              {pedidosActivos.map((pedido) => (
+              {pedidosActivosFiltrados.map((pedido) => (
                 <tr key={pedido.id} className={styles.row}>
                   <td className={styles.tdCheck}>
                     <input type="checkbox" checked={pedido.checked} onChange={() => toggleCheck(pedido.id)} className={styles.checkbox} />
@@ -102,8 +120,8 @@ export default function Pedidos() {
                   </td>
                 </tr>
               ))}
-              {pedidosActivos.length === 0 && (
-                <tr><td colSpan={6} className={styles.vacio}>No hay pedidos activos.</td></tr>
+              {pedidosActivosFiltrados.length === 0 && (
+                <tr><td colSpan={6} className={styles.vacio}>{hayFiltrosActivos ? 'No hay pedidos con esos filtros.' : 'No hay pedidos activos.'}</td></tr>
               )}
             </tbody>
           </table>
@@ -157,6 +175,47 @@ export default function Pedidos() {
               ))}
             </div>
             <button className={styles.modalCerrar} onClick={() => setModalEstado(null)}>Cancelar</button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal filtros */}
+      {modalFiltros && (
+        <div className={styles.modalOverlay} onClick={() => setModalFiltros(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitulo}>FILTROS</h3>
+            <div className={styles.modalFiltrosForm}>
+              <div className={styles.modalFiltrosCampo}>
+                <label className={styles.modalFiltrosLabel}>Estado</label>
+                <select
+                  className={styles.modalFiltrosSelect}
+                  value={filtrosTemp.estado}
+                  onChange={(e) => setFiltrosTemp({ ...filtrosTemp, estado: e.target.value })}
+                >
+                  <option value="">Todos</option>
+                  {ESTADOS.map((e) => <option key={e} value={e}>{e}</option>)}
+                </select>
+              </div>
+              <div className={styles.modalFiltrosCampo}>
+                <label className={styles.modalFiltrosLabel}>Proveedor</label>
+                <input
+                  className={styles.modalFiltrosInput}
+                  type="text"
+                  placeholder="Buscar proveedor..."
+                  value={filtrosTemp.proveedor}
+                  onChange={(e) => setFiltrosTemp({ ...filtrosTemp, proveedor: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className={styles.modalOpciones}>
+              <button className={styles.modalOpcion} onClick={() => { setFiltros({ ...filtrosTemp }); setModalFiltros(false); }}>
+                APLICAR
+              </button>
+              <button className={styles.modalOpcionCancelar} onClick={() => { setFiltros({ estado: '', proveedor: '' }); setFiltrosTemp({ estado: '', proveedor: '' }); setModalFiltros(false); }}>
+                LIMPIAR FILTROS
+              </button>
+            </div>
+            <button className={styles.modalCerrar} onClick={() => setModalFiltros(false)}>Cancelar</button>
           </div>
         </div>
       )}

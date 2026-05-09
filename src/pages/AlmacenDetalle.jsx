@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { usePedidos } from '../hooks/usePedidos';
 import { useInventarios } from '../hooks/useInventarios';
+import { useEntregas } from '../hooks/useEntregas';
 import PedidoDetalle from './PedidoDetalle';
 import styles from './AlmacenDetalle.module.css';
 
@@ -17,6 +18,9 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
   const { pedidos, actualizarEstado } = usePedidos();
   const { inventarios, agregarProducto } = useInventarios();
+  const { entregas } = useEntregas();
+
+  const entregasAlmacen = entregas.filter((e) => e.almacenId === almacen.id);
   
   // Obtener inventario del almacén
   const inventario = inventarios[almacen.id] || [];
@@ -160,7 +164,66 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
       {/* Tab Transporte */}
       {tabActivo === 'transporte' && (
         <div className={styles.tabContent}>
-          <p>Información de transporte del almacén: {almacen.transporte}</p>
+          <div className={styles.transporteGrid}>
+            <div className={styles.transporteCard}>
+              <div className={styles.transporteCardTitle}>INFORMACIÓN DE TRANSPORTE</div>
+              <div className={styles.transporteInfoList}>
+                <div className={styles.transporteItem}>
+                  <span className={styles.transporteLabel}>Vehículos disponibles:</span>
+                  <span className={styles.transporteVal}>{almacen.transporte}</span>
+                </div>
+                <div className={styles.transporteItem}>
+                  <span className={styles.transporteLabel}>Encargado:</span>
+                  <span className={styles.transporteVal}>{almacen.encargado}</span>
+                </div>
+                <div className={styles.transporteItem}>
+                  <span className={styles.transporteLabel}>Teléfono de contacto:</span>
+                  <span className={styles.transporteVal}>{almacen.telefono}</span>
+                </div>
+                <div className={styles.transporteItem}>
+                  <span className={styles.transporteLabel}>Dirección:</span>
+                  <span className={styles.transporteVal}>{almacen.direccion}</span>
+                </div>
+                <div className={styles.transporteItem}>
+                  <span className={styles.transporteLabel}>Estado del almacén:</span>
+                  <span className={`${styles.badge} ${styles[almacen.estadoKey]}`}>{almacen.estado}</span>
+                </div>
+                <div className={styles.transporteItem}>
+                  <span className={styles.transporteLabel}>Capacidad total:</span>
+                  <span className={styles.transporteVal}>{almacen.capacidad} KG</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 className={styles.sectionTitle}>ENTREGAS REALIZADAS DESDE ESTE ALMACÉN</h3>
+          <p className={styles.sectionHint}>Historial de productos enviados a puntos de venta</p>
+          <div className={styles.tableWrapper}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>FECHA</th>
+                  <th>PUNTO DE VENTA DESTINO</th>
+                  <th>PRODUCTOS</th>
+                  <th>TOTAL KG</th>
+                  <th>ESTADO</th>
+                </tr>
+              </thead>
+              <tbody>
+                {entregasAlmacen.length > 0 ? entregasAlmacen.map((e) => (
+                  <tr key={e.id} className={styles.row}>
+                    <td>{e.fecha}</td>
+                    <td>{e.puntoVentaNombre}</td>
+                    <td>{e.productos.map((p) => `${p.nombre} (${p.cantidad}KG)`).join(', ')}</td>
+                    <td>{e.productos.reduce((s, p) => s + p.cantidad, 0)} KG</td>
+                    <td><span className={`${styles.badge} ${styles.entregado}`}>{e.estado}</span></td>
+                  </tr>
+                )) : (
+                  <tr><td colSpan={5} className={styles.vacio}>No hay entregas registradas para este almacén</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

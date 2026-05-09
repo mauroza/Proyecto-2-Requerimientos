@@ -394,3 +394,114 @@
 .btnVolver:hover {
   background-color: #b8b8b8;
 }
+
+/* Transporte tab */
+.transporteGrid {
+  margin-bottom: 28px;
+}
+
+.transporteCard {
+  background-color: #f7f7f7;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 20px 24px;
+}
+
+.transporteCardTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a3a8c;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.transporteInfoList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 32px;
+}
+
+.transporteItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.transporteLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.transporteVal {
+  font-size: 13px;
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px 0;
+}
+
+.sectionHint {
+  font-size: 11px;
+  color: #888;
+  margin: 0 0 14px 0;
+}
+
+/* Badge estados almacén */
+.activo {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.mantenimiento {
+  background-color: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffe0b2;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.inactivo {
+  background-color: #fdecea;
+  color: #c0392b;
+  border: 1px solid #f5c6c6;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.entregado {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Mauro\\\\Desktop\\\\TEC\\\\2026\\\\Requerimientos de software\\\\Proyecto_2\\\\prototipo-visual\\\\.claude\\\\worktrees\\\\practical-hellman-a0494b\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(git add *)"
+    ]
+  }
+}
