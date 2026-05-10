@@ -13,6 +13,7 @@ export default function EditarPuntoVenta({ puntoVenta, onVolver, onGuardar }) {
     fechaDepartamento: puntoVenta.fechaDepartamento || '',
     fechaRecogedor: puntoVenta.fechaRecogedor || '',
     estado: puntoVenta.estado || 'ACTIVO',
+    ganancias: puntoVenta.ganancias ?? '',
   });
   const [errores, setErrores] = useState({});
 
@@ -65,6 +66,7 @@ export default function EditarPuntoVenta({ puntoVenta, onVolver, onGuardar }) {
       fechaRecogedor: form.fechaRecogedor,
       estado: form.estado,
       estadoKey: form.estado.toLowerCase(),
+      ganancias: Number(form.ganancias) || 0,
     });
   };
 
@@ -183,6 +185,17 @@ export default function EditarPuntoVenta({ puntoVenta, onVolver, onGuardar }) {
               <option value="MANTENIMIENTO">MANTENIMIENTO</option>
               <option value="INACTIVO">INACTIVO</option>
             </select>
+          </div>
+          <div className={styles.fila}>
+            <label className={styles.label}>Ganancias en colones (₡)</label>
+            <input
+              type="number"
+              min={0}
+              className={styles.input}
+              value={form.ganancias}
+              onChange={(e) => handleChange('ganancias', e.target.value)}
+              placeholder="Ej: 450000"
+            />
           </div>
         </div>
       </div>

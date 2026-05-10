@@ -22,15 +22,29 @@
   border: 1px solid #e4e4e4;
   border-radius: 4px;
   padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.formGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px 28px;
-  margin-bottom: 20px;
+/* Sections */
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
+.seccionTitulo {
+  font-size: 10px;
+  font-weight: 700;
+  color: #1a3a8c;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #1a3a8c;
+}
+
+/* Select */
 .campo {
   display: flex;
   flex-direction: column;
@@ -55,12 +69,12 @@
   color: #333;
   outline: none;
   transition: border-color 0.15s;
+  max-width: 400px;
 }
 
 .input:focus,
 .select:focus {
   border-color: #1a3a8c;
-  background-color: #fff;
 }
 
 .inputError {
@@ -74,40 +88,159 @@
   font-weight: 500;
 }
 
-.infoPunto {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 6px 12px;
-  background-color: #f0f4ff;
-  border: 1px solid #c5d3f5;
-  border-radius: 2px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  font-size: 12px;
+/* Entrega cards grid */
+.entregasGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
 }
 
-.infoPuntoLabel {
+.entregaCard {
+  background: #fff;
+  border: 2px solid #e4e4e4;
+  border-radius: 4px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.entregaCard:hover {
+  border-color: #1a3a8c;
+  box-shadow: 0 2px 8px rgba(26,58,140,0.1);
+}
+
+.entregaCardSeleccionada {
+  border-color: #1a3a8c;
+  background-color: #f0f4ff;
+  box-shadow: 0 2px 8px rgba(26,58,140,0.15);
+}
+
+.entregaCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.entregaFecha {
+  font-size: 12px;
   font-weight: 700;
+  color: #1a1a1a;
+}
+
+.entregaAlmacen {
+  font-size: 10px;
   color: #1a3a8c;
-  font-size: 11px;
-  letter-spacing: 0.3px;
+  font-weight: 600;
+  background: #e8eef8;
+  padding: 2px 8px;
+  border-radius: 10px;
   white-space: nowrap;
 }
 
-.infoPuntoVal {
+.entregaProductos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.entregaProductoBadge {
+  font-size: 10px;
+  background: #f0f0f0;
+  color: #444;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.entregaTotal {
+  font-size: 11px;
+  color: #888;
+  font-weight: 600;
+}
+
+.sinEntregas {
+  font-size: 12px;
+  color: #888;
+  background: #f5f5f5;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  padding: 16px 20px;
+}
+
+/* Products table */
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.5px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e4e4e4;
+  background: #f5f5f5;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.tdProducto {
   font-weight: 600;
   color: #1a1a1a;
 }
 
-.infoPuntoDir {
-  color: #666;
-  width: 100%;
+.inputWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
+.inputCantidad {
+  width: 100px;
+  height: 32px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #333;
+  outline: none;
+}
+
+.inputCantidad:focus {
+  border-color: #1a3a8c;
+}
+
+/* Date / transport form */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 28px;
+}
+
+.campoFull {
+  grid-column: 1 / -1;
+}
+
+/* Confirm button */
 .botones {
   display: flex;
   justify-content: flex-end;
+  padding-top: 4px;
 }
 
 .btnConfirmar {
@@ -127,7 +260,68 @@
   background-color: #162f72;
 }
 
-/* Éxito */
+/* Section hint */
+.seccionHint {
+  font-size: 11px;
+  color: #888;
+  margin: -8px 0 10px 0;
+}
+
+/* Sobrante column */
+.sobrantePos {
+  font-weight: 700;
+  color: #1a3a8c;
+}
+
+.sobranteZero {
+  color: #aaa;
+}
+
+/* Summary box */
+.resumenBox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  background: #f0f4ff;
+  border: 1px solid #c5d3f5;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.resumenItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 20px;
+  flex: 1;
+  min-width: 130px;
+  border-right: 1px solid #c5d3f5;
+}
+
+.resumenItem:last-child {
+  border-right: none;
+}
+
+.resumenLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #1a3a8c;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.resumenVal {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.resumenVendido { color: #2e7d32; }
+.resumenSobrante { color: #e65100; }
+.resumenGanancias { color: #1a3a8c; }
+
+/* Success screen */
 .exitoContainer {
   flex: 1;
   display: flex;
@@ -144,7 +338,7 @@
 .exitoIcon {
   width: 64px;
   height: 64px;
-  background-color: #1a3a8c;
+  background-color: #2e7d32;
   color: #fff;
   border-radius: 50%;
   display: flex;

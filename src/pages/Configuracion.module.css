@@ -1,0 +1,55 @@
+.container { flex: 1; background: #fff; margin: 20px; border-radius: 4px; padding: 32px 36px; box-shadow: 0 2px 8px rgba(0,0,0,.07); display: flex; flex-direction: column; gap: 28px; overflow-y: auto; }
+.title { font-size: 26px; font-weight: 700; color: #1a1a1a; letter-spacing: 1px; margin: 0; }
+.section { display: flex; flex-direction: column; gap: 12px; }
+.sectionTitle { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 1px; text-transform: uppercase; margin: 0; padding-bottom: 8px; border-bottom: 1px solid #e8e8e8; }
+/* Perfil */
+.perfilCard { display: flex; gap: 32px; align-items: flex-start; background: #f9f9f9; border: 1px solid #e8e8e8; border-radius: 4px; padding: 24px 28px; }
+.fotoWrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
+.fotoCirculo { width: 90px; height: 90px; border-radius: 50%; background: #1a3a8c; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; position: relative; }
+.fotoCirculo:hover .fotoOverlay { opacity: 1; }
+.fotoImg { width: 100%; height: 100%; object-fit: cover; }
+.fotoInicial { font-size: 36px; font-weight: 700; color: #fff; }
+.fotoOverlay { position: absolute; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; opacity: 0; transition: opacity .2s; border-radius: 50%; }
+.fileInput { display: none; }
+.fotoHint { font-size: 10px; color: #aaa; }
+.perfilInfo { flex: 1; }
+.nombreDisplay { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+.emailDisplay { font-size: 13px; color: #555; margin-bottom: 4px; }
+.rolDisplay { font-size: 11px; color: #aaa; margin-bottom: 16px; text-transform: uppercase; letter-spacing: .3px; }
+.btnEditar { background: transparent; border: 1px solid #1a3a8c; color: #1a3a8c; padding: 8px 20px; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: 2px; }
+.btnEditar:hover { background: #1a3a8c; color: #fff; }
+.editForm { display: flex; flex-direction: column; gap: 14px; }
+.campo { display: flex; flex-direction: column; gap: 5px; }
+.label { font-size: 11px; font-weight: 700; color: #555; letter-spacing: .3px; }
+.input { height: 36px; background: #fff; border: 1px solid #ddd; border-radius: 2px; padding: 0 10px; font-size: 12px; color: #333; outline: none; }
+.input:focus { border-color: #1a3a8c; }
+.editBotones { display: flex; gap: 10px; margin-top: 4px; }
+.btnPrimary { background: #1a3a8c; color: #fff; border: none; padding: 9px 22px; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: 2px; }
+.btnPrimary:hover { background: #162f72; }
+.btnSecundario { background: transparent; border: 1px solid #ccc; color: #555; padding: 9px 22px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 2px; }
+.btnSecundario:hover { background: #f0f0f0; }
+/* Apariencia */
+.opcionCard { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; border: 1px solid #e8e8e8; border-radius: 4px; padding: 16px 20px; }
+.opcionInfo { flex: 1; }
+.opcionTitulo { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 3px; }
+.opcionDesc { font-size: 12px; color: #888; }
+/* Toggle switch */
+.toggle { width: 48px; height: 26px; background: #ccc; border: none; border-radius: 13px; cursor: pointer; position: relative; flex-shrink: 0; transition: background .2s; padding: 0; }
+.toggleOn { background: #1a3a8c; }
+.toggleThumb { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.toggleOn .toggleThumb { left: 25px; }
+/* Info sistema */
+.infoCard { background: #f9f9f9; border: 1px solid #e8e8e8; border-radius: 4px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+.infoItem { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.infoLabel { color: #888; font-weight: 600; }
+.infoVal { color: #1a1a1a; }
+/* Logout */
+.logoutCard { display: flex; justify-content: space-between; align-items: center; background: #fdecea; border: 1px solid #f5c6c6; border-radius: 4px; padding: 16px 20px; }
+.btnLogout { background: #c0392b; color: #fff; border: none; padding: 10px 24px; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: 2px; white-space: nowrap; }
+.btnLogout:hover { background: #922b21; }
+/* Modal */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal { background: #fff; border-radius: 4px; padding: 32px 36px; min-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,.18); }
+.modalTitulo { font-size: 16px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px; }
+.modalSub { font-size: 12px; color: #888; margin: 0 0 24px; }
+.modalBotones { display: flex; justify-content: flex-end; gap: 10px; }

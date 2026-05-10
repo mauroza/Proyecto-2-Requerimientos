@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'puntos_venta_data';
+const SYNC_EVENT = 'sync_puntos_venta';
 
 const initialPuntosVenta = [
   {
@@ -14,6 +15,7 @@ const initialPuntosVenta = [
     fechaRecogedor: '2026-01-20',
     estado: 'ACTIVO',
     estadoKey: 'activo',
+    ganancias: 450000,
     checked: false
   },
   {
@@ -27,6 +29,7 @@ const initialPuntosVenta = [
     fechaRecogedor: '2026-01-18',
     estado: 'ACTIVO',
     estadoKey: 'activo',
+    ganancias: 310000,
     checked: false
   },
   {
@@ -40,6 +43,7 @@ const initialPuntosVenta = [
     fechaRecogedor: '2026-01-19',
     estado: 'MANTENIMIENTO',
     estadoKey: 'mantenimiento',
+    ganancias: 0,
     checked: false
   }
 ];
@@ -55,15 +59,22 @@ function cargar() {
 
 function guardar(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  window.dispatchEvent(new Event(SYNC_EVENT));
 }
 
 export function usePuntosVenta() {
   const [puntosVenta, setPuntosVentaState] = useState(cargar);
 
+  useEffect(() => {
+    const sync = () => setPuntosVentaState(cargar());
+    window.addEventListener(SYNC_EVENT, sync);
+    return () => window.removeEventListener(SYNC_EVENT, sync);
+  }, []);
+
   const setPuntosVentaData = (fn) => {
     setPuntosVentaState((prev) => {
       const siguiente = typeof fn === 'function' ? fn(prev) : fn;
-      guardar(siguiente);
+      queueMicrotask(() => guardar(siguiente));
       return siguiente;
     });
   };

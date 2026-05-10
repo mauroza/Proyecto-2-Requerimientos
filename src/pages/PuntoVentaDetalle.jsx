@@ -1,51 +1,64 @@
 import styles from './PuntoVentaDetalle.module.css';
 
+const fmt = (n) =>
+  new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(n ?? 0);
+
 export default function PuntoVentaDetalle({ puntoVenta, onVolver }) {
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>INFORMACION DEL PUNTO DE VENTA</h1>
-      <hr className={styles.divider} />
+    <div className={styles.overlay} onClick={onVolver}>
+      <div className={styles.modalGrande} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.detalleHeader}>
+          <div>
+            <h2 className={styles.detalleTitulo}>{puntoVenta.nombre}</h2>
+            <span className={`${styles.badge} ${styles[puntoVenta.estadoKey]}`}>
+              {puntoVenta.estado}
+            </span>
+          </div>
+          <button className={styles.btnCerrarX} onClick={onVolver}>✕</button>
+        </div>
+        <hr className={styles.modalDivider} />
 
-      <div className={styles.tabla}>
-        <div className={styles.fila}>
-          <span className={styles.label}>Nombre del punto de venta:</span>
-          <span className={styles.valor}>{puntoVenta.nombre}</span>
-        </div>
-        <div className={styles.fila}>
-          <span className={styles.label}>Dirección:</span>
-          <span className={styles.valor}>{puntoVenta.direccion}</span>
-        </div>
-        <div className={styles.fila}>
-          <span className={styles.label}>Gerente:</span>
-          <span className={styles.valor}>{puntoVenta.gerente}</span>
-        </div>
-        <div className={styles.fila}>
-          <span className={styles.label}>Teléfono:</span>
-          <span className={styles.valor}>{puntoVenta.telefono}</span>
-        </div>
-        <div className={styles.fila}>
-          <span className={styles.label}>Productos negociados:</span>
-          <span className={styles.valor}>{puntoVenta.productosNegociados.join(', ')}</span>
-        </div>
-        <div className={styles.fila}>
-          <span className={styles.label}>Fecha departamento:</span>
-          <span className={styles.valor}>{puntoVenta.fechaDepartamento}</span>
-        </div>
-        <div className={styles.fila}>
-          <span className={styles.label}>Fecha recogedor producto:</span>
-          <span className={styles.valor}>{puntoVenta.fechaRecogedor}</span>
-        </div>
-        <div className={styles.fila}>
-          <span className={styles.label}>Estado:</span>
-          <span className={`${styles.valor} ${styles[puntoVenta.estadoKey]}`}>
-            {puntoVenta.estado}
-          </span>
+        <div className={styles.detalleGrid}>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Gerente</span>
+            <span className={styles.detalleVal}>{puntoVenta.gerente || '—'}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Teléfono</span>
+            <span className={styles.detalleVal}>{puntoVenta.telefono || '—'}</span>
+          </div>
+          <div className={`${styles.detalleItem} ${styles.campoFull}`}>
+            <span className={styles.detalleLabel}>Dirección</span>
+            <span className={styles.detalleVal}>{puntoVenta.direccion || '—'}</span>
+          </div>
+          <div className={`${styles.detalleItem} ${styles.campoFull}`}>
+            <span className={styles.detalleLabel}>Productos negociados</span>
+            <div className={styles.productosWrap}>
+              {puntoVenta.productosNegociados && puntoVenta.productosNegociados.length > 0
+                ? puntoVenta.productosNegociados.map((p) => (
+                    <span key={p} className={styles.productoBadge}>{p}</span>
+                  ))
+                : <span className={styles.sinDato}>No especificados</span>}
+            </div>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Fecha departamento</span>
+            <span className={styles.detalleVal}>{puntoVenta.fechaDepartamento || '—'}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Fecha recogedor producto</span>
+            <span className={styles.detalleVal}>{puntoVenta.fechaRecogedor || '—'}</span>
+          </div>
+          {puntoVenta.ganancias != null && (
+            <div className={`${styles.detalleItem} ${styles.campoFull}`}>
+              <span className={styles.detalleLabel}>Ganancias acumuladas</span>
+              <span className={`${styles.detalleVal} ${styles.gananciasVal}`}>
+                {fmt(puntoVenta.ganancias)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
-
-      <button className={styles.btnVolver} onClick={onVolver}>
-        VOLVER
-      </button>
     </div>
   );
 }

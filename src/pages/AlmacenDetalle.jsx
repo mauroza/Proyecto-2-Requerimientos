@@ -5,35 +5,29 @@ import { useEntregas } from '../hooks/useEntregas';
 import PedidoDetalle from './PedidoDetalle';
 import styles from './AlmacenDetalle.module.css';
 
-// Datos quemados de inventario por almacén - se actualiza al recibir productos
-const initialInventariosData = {
-  1: [],
-  2: [],
-  3: [],
-};
-
 export default function AlmacenDetalle({ almacen, onVolver }) {
   const [tabActivo, setTabActivo] = useState('inventario');
   const [modalRecibir, setModalRecibir] = useState(false);
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
+  const [editandoItem, setEditandoItem] = useState(null);
+  const [confirmarEliminar, setConfirmarEliminar] = useState(null);
   const { pedidos, actualizarEstado } = usePedidos();
-  const { inventarios, agregarProducto } = useInventarios();
+  const { inventarios, agregarProducto, eliminarProducto, editarProducto } = useInventarios();
   const { entregas } = useEntregas();
 
   const entregasAlmacen = entregas.filter((e) => e.almacenId === almacen.id);
-  
-  // Obtener inventario del almacén
   const inventario = inventarios[almacen.id] || [];
-  
-  // Obtener pedidos en transporte destinados a este almacén
+
   const pedidosEnTransporte = pedidos.filter(
-    (p) => p.estado === 'EN TRANSPORTE' && (
-      p.almacen.toUpperCase().includes(almacen.nombre.split(' ')[almacen.nombre.split(' ').length - 1].toUpperCase()) || 
-      p.almacen.toUpperCase() === almacen.nombre.toUpperCase()
-    )
+    (p) => p.estado === 'EN TRANSPORTE' &&
+      p.almacen?.toUpperCase() === almacen.nombre?.toUpperCase()
   );
-  
-  // Calcular disponibilidad basada en capacidad y productos ingresados
+
+  const pedidosEnRecoleccion = pedidos.filter(
+    (p) => p.estado === 'EN RECOLECCION' &&
+      p.almacen?.toUpperCase() === almacen.nombre?.toUpperCase()
+  );
+
   const capacidadTotal = parseInt(almacen.capacidad) || 100;
   const pesoTotal = inventario.reduce((sum, item) => sum + item.cantidad, 0);
   const disponibleKG = Math.max(0, capacidadTotal - pesoTotal);
@@ -42,7 +36,6 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
 
   const crearProductoRecibido = (pedido) => {
     const cantidadKG = parseInt(pedido.cantidad) || 0;
-
     return {
       id: `pedido-${pedido.id}`,
       nombre: pedido.producto || pedido.nombre,
@@ -63,6 +56,16 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
     setModalRecibir(false);
   };
 
+  const handleGuardarEdicion = (datosActualizados) => {
+    editarProducto(almacen.id, editandoItem.id, datosActualizados);
+    setEditandoItem(null);
+  };
+
+  const handleConfirmarEliminar = () => {
+    eliminarProducto(almacen.id, confirmarEliminar.id);
+    setConfirmarEliminar(null);
+  };
+
   if (pedidoSeleccionado) {
     return <PedidoDetalle pedido={pedidoSeleccionado} onVolver={() => setPedidoSeleccionado(null)} />;
   }
@@ -71,8 +74,25 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>{almacen.nombre}</h1>
-        <button className={styles.btnRecibir} onClick={() => setModalRecibir(true)}>RECIBIR PRODUCTO</button>
       </div>
+
+      {pedidosEnTransporte.length > 0 && (
+        <div className={styles.alertaBanner}>
+          <span className={styles.alertaTexto}>
+            🚚 {pedidosEnTransporte.length} pedido{pedidosEnTransporte.length > 1 ? 's' : ''} en camino — listo{pedidosEnTransporte.length > 1 ? 's' : ''} para recibir
+          </span>
+          <button className={styles.btnAlerta} onClick={() => setModalRecibir(true)}>
+            RECIBIR AHORA
+          </button>
+        </div>
+      )}
+      {pedidosEnRecoleccion.length > 0 && (
+        <div className={styles.infoBanner}>
+          <span className={styles.infoTexto}>
+            📦 {pedidosEnRecoleccion.length} pedido{pedidosEnRecoleccion.length > 1 ? 's' : ''} en recolección con el proveedor
+          </span>
+        </div>
+      )}
 
       <div className={styles.tabs}>
         <button
@@ -90,7 +110,6 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
       </div>
       <hr className={styles.divider} />
 
-      {/* Tab Inventario */}
       {tabActivo === 'inventario' && (
         <div className={styles.tabContent}>
           <div className={styles.disponibilidadBox}>
@@ -118,15 +137,13 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
               <thead>
                 <tr>
                   <th>NOMBRE</th>
-                  <th>CANTIDAD DE PRODUCTO</th>
+                  <th>CANTIDAD</th>
                   <th>FECHA DE INGRESO</th>
                   <th>PUNTO DE VENTA</th>
                   <th>PROVEEDOR</th>
                   <th>FECHA DE ENTREGA</th>
                   <th>ESTADO</th>
-                  <th className={styles.thFiltros}>
-                    <span className={styles.filtrosLink}>FILTROS</span>
-                  </th>
+                  <th>ACCIONES</th>
                 </tr>
               </thead>
               <tbody>
@@ -136,17 +153,27 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
                       <td>{item.nombre}</td>
                       <td>{item.cantidad} KG</td>
                       <td>{item.fechaIngreso}</td>
-                      <td>{item.puntoVenta}</td>
-                      <td>{item.proveedor}</td>
-                      <td>{item.fechaEntrega}</td>
+                      <td>{item.puntoVenta || '—'}</td>
+                      <td>{item.proveedor || '—'}</td>
+                      <td>{item.fechaEntrega || '—'}</td>
                       <td>
-                        <span className={`${styles.badge} ${styles[item.estadoKey]}`}>
-                          {item.estado}
+                        <span className={`${styles.badge} ${styles[item.estadoKey] || styles.enalmacen}`}>
+                          {item.estado || 'EN ALMACEN'}
                         </span>
                       </td>
                       <td className={styles.tdAcciones}>
-                        <button className={styles.actionBtn}>EDITAR</button>
-                        <button className={styles.actionBtn}>ELIMINAR</button>
+                        <button
+                          className={styles.actionBtn}
+                          onClick={() => setEditandoItem(item)}
+                        >
+                          EDITAR
+                        </button>
+                        <button
+                          className={styles.actionBtnEliminar}
+                          onClick={() => setConfirmarEliminar(item)}
+                        >
+                          ELIMINAR
+                        </button>
                       </td>
                     </tr>
                   ))
@@ -161,7 +188,6 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
         </div>
       )}
 
-      {/* Tab Transporte */}
       {tabActivo === 'transporte' && (
         <div className={styles.tabContent}>
           <div className={styles.transporteGrid}>
@@ -233,10 +259,8 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
           <div className={styles.modalRecibir} onClick={(e) => e.stopPropagation()}>
             <h2 className={styles.modalTitulo}>Recepcion de productos</h2>
             <hr className={styles.modalDivider} />
-            
             <div className={styles.modalContent}>
               <h3 className={styles.modalSubtitulo}>SELECCIONAR PEDIDO</h3>
-              
               <table className={styles.modalTable}>
                 <thead>
                   <tr>
@@ -260,16 +284,10 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
                           </span>
                         </td>
                         <td className={styles.modalTdAcciones}>
-                          <button 
-                            className={styles.btnInfo}
-                            onClick={() => setPedidoSeleccionado(pedido)}
-                          >
+                          <button className={styles.btnInfo} onClick={() => setPedidoSeleccionado(pedido)}>
                             INFORMACIÓN
                           </button>
-                          <button 
-                            className={styles.btnRecibir}
-                            onClick={() => handleRecibirProducto(pedido)}
-                          >
+                          <button className={styles.btnRecibir} onClick={() => handleRecibirProducto(pedido)}>
                             RECIBIR
                           </button>
                         </td>
@@ -283,7 +301,6 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
                 </tbody>
               </table>
             </div>
-
             <button className={styles.btnVolver} onClick={() => setModalRecibir(false)}>
               VOLVER
             </button>
@@ -291,9 +308,135 @@ export default function AlmacenDetalle({ almacen, onVolver }) {
         </div>
       )}
 
+      {/* Modal Editar Producto */}
+      {editandoItem && (
+        <EditarItemModal
+          item={editandoItem}
+          onGuardar={handleGuardarEdicion}
+          onCerrar={() => setEditandoItem(null)}
+        />
+      )}
+
+      {/* Modal Confirmar Eliminar */}
+      {confirmarEliminar && (
+        <div className={styles.overlay} onClick={() => setConfirmarEliminar(null)}>
+          <div className={styles.modalConfirmar} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitulo}>¿Eliminar producto?</h3>
+            <p className={styles.modalSubConfirm}>
+              Se eliminará <strong>{confirmarEliminar.nombre}</strong> ({confirmarEliminar.cantidad} KG) del inventario. Esta acción no se puede deshacer.
+            </p>
+            <div className={styles.modalBotones}>
+              <button className={styles.btnCancelar} onClick={() => setConfirmarEliminar(null)}>
+                CANCELAR
+              </button>
+              <button className={styles.btnEliminarConfirm} onClick={handleConfirmarEliminar}>
+                ELIMINAR
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <button className={styles.btnVolver} onClick={onVolver}>
         VOLVER
       </button>
+    </div>
+  );
+}
+
+function EditarItemModal({ item, onGuardar, onCerrar }) {
+  const [form, setForm] = useState({
+    nombre: item.nombre || '',
+    cantidad: item.cantidad || 0,
+    fechaIngreso: item.fechaIngreso || '',
+    proveedor: item.proveedor || '',
+    puntoVenta: item.puntoVenta || '',
+    fechaEntrega: item.fechaEntrega || '',
+  });
+  const [errors, setErrors] = useState({});
+
+  const set = (k, v) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setErrors((p) => { const { [k]: _, ...r } = p; return r; });
+  };
+
+  const handleGuardar = () => {
+    const e = {};
+    if (!form.nombre.trim()) e.nombre = true;
+    if (!form.cantidad || Number(form.cantidad) <= 0) e.cantidad = true;
+    setErrors(e);
+    if (Object.keys(e).length === 0) {
+      onGuardar({ ...form, cantidad: Number(form.cantidad) });
+    }
+  };
+
+  return (
+    <div className={styles.overlay} onClick={onCerrar}>
+      <div className={styles.modalEditar} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalEditarHeader}>
+          <h2 className={styles.modalTitulo}>EDITAR PRODUCTO</h2>
+          <button className={styles.btnCerrarX} onClick={onCerrar}>✕</button>
+        </div>
+        <hr className={styles.modalDivider} />
+        <div className={styles.modalGrid}>
+          <div className={`${styles.campo} ${styles.campoFull}`}>
+            <label className={styles.label}>NOMBRE *</label>
+            <input
+              className={`${styles.input} ${errors.nombre ? styles.inputError : ''}`}
+              value={form.nombre}
+              onChange={(e) => set('nombre', e.target.value)}
+            />
+          </div>
+          <div className={styles.campo}>
+            <label className={styles.label}>CANTIDAD (KG) *</label>
+            <input
+              type="number"
+              min={1}
+              className={`${styles.input} ${errors.cantidad ? styles.inputError : ''}`}
+              value={form.cantidad}
+              onChange={(e) => set('cantidad', e.target.value)}
+            />
+          </div>
+          <div className={styles.campo}>
+            <label className={styles.label}>FECHA DE INGRESO</label>
+            <input
+              className={styles.input}
+              value={form.fechaIngreso}
+              onChange={(e) => set('fechaIngreso', e.target.value)}
+              placeholder="DD-MM-AAAA"
+            />
+          </div>
+          <div className={styles.campo}>
+            <label className={styles.label}>PROVEEDOR</label>
+            <input
+              className={styles.input}
+              value={form.proveedor}
+              onChange={(e) => set('proveedor', e.target.value)}
+            />
+          </div>
+          <div className={styles.campo}>
+            <label className={styles.label}>PUNTO DE VENTA</label>
+            <input
+              className={styles.input}
+              value={form.puntoVenta}
+              onChange={(e) => set('puntoVenta', e.target.value)}
+            />
+          </div>
+          <div className={`${styles.campo} ${styles.campoFull}`}>
+            <label className={styles.label}>FECHA DE ENTREGA</label>
+            <input
+              className={styles.input}
+              value={form.fechaEntrega}
+              onChange={(e) => set('fechaEntrega', e.target.value)}
+              placeholder="DD-MM-AAAA"
+            />
+          </div>
+        </div>
+        <div className={styles.modalBotones}>
+          <button className={styles.btnCancelar} onClick={onCerrar}>CANCELAR</button>
+          <button className={styles.btnGuardar} onClick={handleGuardar}>GUARDAR</button>
+        </div>
+      </div>
     </div>
   );
 }

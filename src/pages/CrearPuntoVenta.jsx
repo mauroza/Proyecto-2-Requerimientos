@@ -22,6 +22,7 @@ export default function CrearPuntoVenta({ onVolver, onCrear }) {
     fechaDepartamento: '',
     fechaRecogedor: '',
     estado: 'ACTIVO',
+    ganancias: '',
   });
   const [errores, setErrores] = useState({});
 
@@ -236,6 +237,17 @@ export default function CrearPuntoVenta({ onVolver, onCrear }) {
                     <option key={estado} value={estado}>{estado}</option>
                   ))}
                 </select>
+              </div>
+              <div className={styles.fila}>
+                <label className={styles.label}>Ganancias en colones (₡)</label>
+                <input
+                  type="number"
+                  min={0}
+                  className={styles.input}
+                  value={form.ganancias}
+                  onChange={(e) => handleChange('ganancias', e.target.value)}
+                  placeholder="Ej: 450000"
+                />
               </div>
             </>
           )}

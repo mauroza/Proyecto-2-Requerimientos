@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import styles from './HistorialMovimientos.module.css';
 
+const fmt = (n) =>
+  new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(n ?? 0);
+
 export default function HistorialMovimientos({ entregas, recolecciones }) {
   const [tabActivo, setTabActivo] = useState('entregas');
 
@@ -61,34 +64,50 @@ export default function HistorialMovimientos({ entregas, recolecciones }) {
 
       {tabActivo === 'recolecciones' && (
         <div className={styles.tableWrapper}>
-          <p className={styles.hint}>Recolecciones programadas o completadas desde puntos de venta</p>
+          <p className={styles.hint}>Recolecciones completadas — vendido, sobrante y ganancias por punto de venta</p>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>FECHA REGISTRO</th>
-                <th>PUNTO DE VENTA</th>
-                <th>PRODUCTO</th>
-                <th>CANTIDAD</th>
                 <th>FECHA RECOLECCIÓN</th>
-                <th>TRANSPORTISTA</th>
+                <th>PUNTO DE VENTA</th>
+                <th>ALMACÉN ORIGEN</th>
+                <th>PRODUCTOS</th>
+                <th>VENDIDO</th>
+                <th>SOBRANTE</th>
+                <th>GANANCIAS</th>
                 <th>ESTADO</th>
               </tr>
             </thead>
             <tbody>
               {recolecciones.length > 0 ? [...recolecciones].reverse().map((r) => (
                 <tr key={r.id} className={styles.row}>
-                  <td>{r.fechaRegistro}</td>
-                  <td>{r.puntoVentaNombre}</td>
-                  <td>{r.producto}</td>
-                  <td>{r.cantidad} KG</td>
                   <td>{r.fecha}</td>
-                  <td>{r.transportista || <span className={styles.sinDato}>—</span>}</td>
+                  <td>{r.puntoVentaNombre}</td>
+                  <td>{r.almacenNombre || '—'}</td>
+                  <td className={styles.tdProductos}>
+                    {r.productos
+                      ? r.productos.map((p) => (
+                          <span key={p.id} className={styles.productoBadge}>
+                            {p.nombre} {p.entregado}KG
+                          </span>
+                        ))
+                      : '—'}
+                  </td>
+                  <td className={styles.vendidoVal}>
+                    {r.totalVendido != null ? `${r.totalVendido} KG` : '—'}
+                  </td>
+                  <td className={r.totalSobrante > 0 ? styles.sobranteVal : styles.sobranteZero}>
+                    {r.totalSobrante != null ? `${r.totalSobrante} KG` : '—'}
+                  </td>
+                  <td className={styles.gananciasVal}>
+                    {r.ganancias != null ? fmt(r.ganancias) : '—'}
+                  </td>
                   <td>
                     <span className={`${styles.badge} ${styles[r.estadoKey]}`}>{r.estado}</span>
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan={7} className={styles.vacio}>No hay recolecciones registradas aún</td></tr>
+                <tr><td colSpan={8} className={styles.vacio}>No hay recolecciones registradas aún</td></tr>
               )}
             </tbody>
           </table>

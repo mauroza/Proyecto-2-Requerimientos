@@ -1,20 +1,28 @@
 import styles from './Sidebar.module.css';
 
-const navItems = [
+const defaultItems = [
   { label: 'PEDIDOS', key: 'pedidos' },
   { label: 'ALMACENES', key: 'almacenes' },
   { label: 'PUNTOS DE VENTA', key: 'puntos' },
-  { label: 'PROVEDORES', key: 'provedores' },
+  { label: 'PROVEEDORES', key: 'proveedores' },
   { label: 'TRANSPORTE', key: 'transporte' },
-  { label: 'REPORTES', key: 'reportes' },
+  { label: 'INFORMES', key: 'informes' },
 ];
 
-export default function Sidebar({ active, onNavigate }) {
+const defaultBottom = [{ label: 'CONFIGURACION', key: 'configuracion' }];
+
+export default function Sidebar({
+  active,
+  onNavigate,
+  items = defaultItems,
+  bottomItems = defaultBottom,
+  userLabel = 'ADMIN@DISTRIBUCION.COM',
+}) {
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.userEmail}>ADMIN@DISTRIBUCION.COM</div>
+      <div className={styles.userEmail}>{userLabel}</div>
       <nav className={styles.nav}>
-        {navItems.map((item) => (
+        {items.map((item) => (
           <button
             key={item.key}
             className={`${styles.navItem} ${active === item.key ? styles.navItemActive : ''}`}
@@ -25,12 +33,15 @@ export default function Sidebar({ active, onNavigate }) {
         ))}
       </nav>
       <div className={styles.bottomNav}>
-        <button
-          className={`${styles.navItem} ${active === 'configuracion' ? styles.navItemActive : ''}`}
-          onClick={() => onNavigate('configuracion')}
-        >
-          CONFIGURACION
-        </button>
+        {bottomItems.map((item) => (
+          <button
+            key={item.key}
+            className={`${styles.navItem} ${active === item.key ? styles.navItemActive : ''}`}
+            onClick={() => onNavigate(item.key)}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
     </aside>
   );

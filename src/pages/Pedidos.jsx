@@ -1,12 +1,80 @@
 import { useState } from 'react';
 import styles from './Pedidos.module.css';
-import PedidoDetalle from './PedidoDetalle';
 import CrearPedido from './CrearPedido';
 import EditarPedido from './EditarPedido';
 import { usePedidos } from '../hooks/usePedidos';
 import { useAlmacenes } from '../hooks/useAlmacenes';
+import { useProveedores } from '../hooks/useProveedores';
+import { usePuntosVenta } from '../hooks/usePuntosVenta';
+import { useTransporte } from '../hooks/useTransporte';
 
-const ESTADOS = ['EN RECOLECCION', 'EN TRANSPORTE', 'RECIBIDO'];
+const ESTADOS = ['EN RECOLECCION', 'EN TRANSPORTE'];
+
+function DetalleModal({ pedido, onCerrar }) {
+  const cls = {
+    recibido: styles.recibido,
+    cancelado: styles.cancelado,
+    transporte: styles.transporte,
+    recoleccion: styles.recoleccion,
+  }[pedido.estadoKey] ?? styles.recoleccion;
+
+  return (
+    <div className={styles.modalOverlay} onClick={onCerrar}>
+      <div className={styles.modalDetalle} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.detalleHeader}>
+          <div>
+            <h2 className={styles.detalleTitulo}>{pedido.nombre}</h2>
+            <span className={`${styles.badge} ${cls}`}>{pedido.estado}</span>
+          </div>
+          <button className={styles.btnCerrarX} onClick={onCerrar}>✕</button>
+        </div>
+        <hr className={styles.modalDivider} />
+        <div className={styles.detalleGrid}>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Proveedor</span>
+            <span className={styles.detalleVal}>{pedido.proveedor || '—'}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Fecha de pedido</span>
+            <span className={styles.detalleVal}>{pedido.fecha}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Producto</span>
+            <span className={styles.detalleVal}>
+              {pedido.producto ? <span className={styles.productoBadge}>{pedido.producto}</span> : '—'}
+            </span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Cantidad</span>
+            <span className={styles.detalleVal}>{pedido.cantidad || '—'}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Punto de venta</span>
+            <span className={styles.detalleVal}>{pedido.puntoVenta || '—'}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Almacén destino</span>
+            <span className={styles.detalleVal}>{pedido.almacen || '—'}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Transportista</span>
+            <span className={styles.detalleVal}>{pedido.transportista || '—'}</span>
+          </div>
+          <div className={styles.detalleItem}>
+            <span className={styles.detalleLabel}>Fecha de recolección</span>
+            <span className={styles.detalleVal}>{pedido.fechaRecoleccion || '—'}</span>
+          </div>
+          {pedido.fechaEntrega && (
+            <div className={styles.detalleItem}>
+              <span className={styles.detalleLabel}>Fecha de entrega</span>
+              <span className={styles.detalleVal}>{pedido.fechaEntrega}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Pedidos() {
   const [activeTab, setActiveTab] = useState('pedidos');
@@ -21,19 +89,21 @@ export default function Pedidos() {
 
   const { pedidos, agregarPedido, actualizarEstado, editarPedido, toggleCheck, toggleAll } = usePedidos();
   const { almacenes } = useAlmacenes();
+  const { proveedores } = useProveedores();
+  const { puntosVenta } = usePuntosVenta();
+  const { transportes } = useTransporte();
 
   const pedidosActivos = pedidos.filter(p => p.estado !== 'RECIBIDO' && p.estado !== 'CANCELADO');
   const pedidosHistorial = pedidos.filter(p => p.estado === 'RECIBIDO' || p.estado === 'CANCELADO');
 
   const pedidosActivosFiltrados = pedidosActivos.filter(p => {
     if (filtros.estado && p.estado !== filtros.estado) return false;
-    if (filtros.proveedor && !p.proveedor.toLowerCase().includes(filtros.proveedor.toLowerCase())) return false;
+    if (filtros.proveedor && !p.proveedor?.toLowerCase().includes(filtros.proveedor.toLowerCase())) return false;
     return true;
   });
 
   const hayFiltrosActivos = filtros.estado || filtros.proveedor;
-
-  const allChecked = pedidosActivosFiltrados.every((p) => p.checked);
+  const allChecked = pedidosActivosFiltrados.length > 0 && pedidosActivosFiltrados.every((p) => p.checked);
 
   const handleCrear = (nuevoPedido) => {
     agregarPedido({ ...nuevoPedido, id: pedidos.length + 1 });
@@ -45,14 +115,32 @@ export default function Pedidos() {
     setModalCancelar(null);
   };
 
-  if (pedidoSeleccionado) {
-    return <PedidoDetalle pedido={pedidoSeleccionado} onVolver={() => setPedidoSeleccionado(null)} />;
-  }
   if (creando) {
-    return <CrearPedido onVolver={() => setCreando(false)} onCrear={handleCrear} totalPedidos={pedidos.length} almacenes={almacenes} />;
+    return (
+      <CrearPedido
+        onVolver={() => setCreando(false)}
+        onCrear={handleCrear}
+        totalPedidos={pedidos.length}
+        almacenes={almacenes}
+        proveedores={proveedores}
+        puntosVenta={puntosVenta}
+        transportes={transportes}
+      />
+    );
   }
+
   if (editando) {
-    return <EditarPedido pedido={editando} onVolver={() => setEditando(null)} onGuardar={(p) => { editarPedido(p); setEditando(null); }} almacenes={almacenes} />;
+    return (
+      <EditarPedido
+        pedido={editando}
+        onVolver={() => setEditando(null)}
+        onGuardar={(p) => { editarPedido(p); setEditando(null); }}
+        almacenes={almacenes}
+        proveedores={proveedores}
+        puntosVenta={puntosVenta}
+        transportes={transportes}
+      />
+    );
   }
 
   return (
@@ -155,6 +243,11 @@ export default function Pedidos() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* Detail overlay modal */}
+      {pedidoSeleccionado && (
+        <DetalleModal pedido={pedidoSeleccionado} onCerrar={() => setPedidoSeleccionado(null)} />
       )}
 
       {/* Modal cambiar estado */}

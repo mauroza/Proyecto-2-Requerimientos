@@ -25,7 +25,7 @@ export default function PuntosVenta() {
 
   const { puntosVenta, agregarPuntoVenta, editarPuntoVenta, eliminarPuntoVenta, actualizarEstado, toggleCheck, toggleAll } = usePuntosVenta();
   const { almacenes } = useAlmacenes();
-  const { inventarios, descontarProductos } = useInventarios();
+  const { inventarios, descontarProductos, devolverProductos } = useInventarios();
   const { entregas, recolecciones, agregarEntrega, agregarRecoleccion } = useEntregas();
 
   const puntosVentaFiltrados = puntosVenta.filter((p) => {
@@ -48,11 +48,14 @@ export default function PuntosVenta() {
 
   const handleRecoger = (recoleccion) => {
     agregarRecoleccion(recoleccion);
+    if (recoleccion.totalSobrante > 0) {
+      const entregaOriginal = entregas.find((e) => e.id === recoleccion.entregaId);
+      if (entregaOriginal) {
+        devolverProductos(entregaOriginal.almacenId, recoleccion.productos);
+      }
+    }
   };
 
-  if (puntoVentaSeleccionado) {
-    return <PuntoVentaDetalle puntoVenta={puntoVentaSeleccionado} onVolver={() => setPuntoVentaSeleccionado(null)} />;
-  }
   if (creando) {
     return <CrearPuntoVenta onVolver={() => setCreando(false)} onCrear={handleCrear} />;
   }
@@ -176,6 +179,7 @@ export default function PuntosVenta() {
       {tabPrincipal === 'recoger' && (
         <Recoger
           puntosVenta={puntosVenta}
+          entregas={entregas}
           onRecoger={handleRecoger}
         />
       )}
@@ -214,6 +218,14 @@ export default function PuntosVenta() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal detalle punto de venta */}
+      {puntoVentaSeleccionado && (
+        <PuntoVentaDetalle
+          puntoVenta={puntoVentaSeleccionado}
+          onVolver={() => setPuntoVentaSeleccionado(null)}
+        />
       )}
 
       {/* Modal cambiar estado */}

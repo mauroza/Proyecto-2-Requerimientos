@@ -1,18 +1,15 @@
 import { useState } from 'react';
 import styles from './CrearPedido.module.css';
 
-const productosOpciones = ['Yuca', 'Piña', 'Banano', 'Papaya', 'Mango'];
-const proveedoresOpciones = ['COLONO', 'AGROSANCARLOS', 'COOPEAGRI', 'DOS PINOS'];
-const puntosVentaOpciones = ['Punto SJ', 'Punto Pital', 'Punto Liberia', 'Punto Cartago'];
-const transporteOpciones = ['Mario Fernandez Hernandez', 'Carlos Mora Jimenez', 'Luis Rojas Vargas'];
+const unidadesOpciones = ['kg', 'lb', 'unidades', 'cajas'];
 
-export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = [] }) {
+export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = [], proveedores = [], puntosVenta = [], transportes = [] }) {
   const [form, setForm] = useState({
     nombre: pedido.nombre || '',
+    proveedor: pedido.proveedor || '',
     producto: pedido.producto || '',
     cantidad: pedido.cantidad?.split(' ')[0] || '',
     unidad: pedido.cantidad?.split(' ')[1] || 'kg',
-    proveedor: pedido.proveedor || '',
     puntoVenta: pedido.puntoVenta || '',
     fechaEntrega: pedido.fechaEntrega || '',
     almacen: pedido.almacen || '',
@@ -26,9 +23,17 @@ export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = 
     setErrores((prev) => ({ ...prev, [field]: false }));
   };
 
+  const handleProveedorChange = (nombre) => {
+    setForm((prev) => ({ ...prev, proveedor: nombre, producto: '' }));
+    setErrores((prev) => ({ ...prev, proveedor: false, producto: false }));
+  };
+
+  const proveedorActual = proveedores.find((p) => p.nombre === form.proveedor);
+  const productosDisponibles = proveedorActual?.productosSuministrados ?? [];
+
   const validar = () => {
     const nuevosErrores = {};
-    ['nombre', 'producto', 'cantidad', 'proveedor', 'puntoVenta', 'almacen', 'transporte'].forEach((key) => {
+    ['nombre', 'proveedor', 'producto', 'cantidad', 'puntoVenta', 'almacen', 'transporte'].forEach((key) => {
       if (!form[key] || form[key].toString().trim() === '') nuevosErrores[key] = true;
     });
     setErrores(nuevosErrores);
@@ -40,9 +45,9 @@ export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = 
     onGuardar({
       ...pedido,
       nombre: form.nombre.toUpperCase(),
+      proveedor: form.proveedor,
       producto: form.producto,
       cantidad: `${form.cantidad} ${form.unidad}`,
-      proveedor: form.proveedor,
       puntoVenta: form.puntoVenta,
       fechaEntrega: form.fechaEntrega,
       almacen: form.almacen,
@@ -50,36 +55,6 @@ export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = 
       fechaRecoleccion: form.fechaRecoleccion,
     });
   };
-
-  const campo = (label, field, tipo = 'input') => (
-    <div className={styles.fila}>
-      <label className={styles.label}>{label}</label>
-      <input
-        type={tipo === 'date' ? 'date' : 'text'}
-        className={`${styles.input} ${errores[field] ? styles.inputError : ''}`}
-        value={form[field]}
-        onChange={(e) => handleChange(field, e.target.value)}
-      />
-    </div>
-  );
-
-  const select = (label, field, opciones) => (
-    <div className={styles.fila}>
-      <label className={styles.label}>{label}</label>
-      <select
-        className={`${styles.select} ${errores[field] ? styles.inputError : ''}`}
-        value={form[field]}
-        onChange={(e) => handleChange(field, e.target.value)}
-      >
-        <option value="">seleccionar</option>
-        {opciones.map((o) => {
-          const valor = typeof o === 'string' ? o : o.nombre;
-          const clave = typeof o === 'string' ? o : o.id;
-          return <option key={clave} value={valor}>{valor}</option>;
-        })}
-      </select>
-    </div>
-  );
 
   return (
     <div className={styles.container}>
@@ -89,10 +64,59 @@ export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = 
       <hr className={styles.divider} />
       <div className={styles.pasoContenido}>
         <div className={styles.form}>
-          {campo('Nombre del pedido', 'nombre')}
-          {select('Producto', 'producto', productosOpciones)}
+
           <div className={styles.fila}>
-            <label className={styles.label}>Cantidad de productos</label>
+            <label className={styles.label}>Nombre del pedido *</label>
+            <input
+              type="text"
+              className={`${styles.input} ${errores.nombre ? styles.inputError : ''}`}
+              value={form.nombre}
+              onChange={(e) => handleChange('nombre', e.target.value)}
+            />
+          </div>
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Proveedor *</label>
+            <select
+              className={`${styles.select} ${errores.proveedor ? styles.inputError : ''}`}
+              value={form.proveedor}
+              onChange={(e) => handleProveedorChange(e.target.value)}
+            >
+              <option value="">— Seleccionar proveedor —</option>
+              {proveedores.map((p) => (
+                <option key={p.id} value={p.nombre}>{p.nombre}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Producto *</label>
+            {productosDisponibles.length > 0 ? (
+              <select
+                className={`${styles.select} ${errores.producto ? styles.inputError : ''}`}
+                value={form.producto}
+                onChange={(e) => handleChange('producto', e.target.value)}
+              >
+                <option value="">— Seleccionar producto —</option>
+                {productosDisponibles.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            ) : (
+              <div style={{ flex: 1 }}>
+                <input
+                  type="text"
+                  className={`${styles.input} ${errores.producto ? styles.inputError : ''}`}
+                  value={form.producto}
+                  onChange={(e) => handleChange('producto', e.target.value)}
+                  placeholder={form.proveedor ? 'Proveedor sin productos — escríbalo' : 'Seleccione un proveedor primero'}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Cantidad *</label>
             <div className={styles.cantidadGroup}>
               <input
                 type="number"
@@ -101,16 +125,71 @@ export default function EditarPedido({ pedido, onVolver, onGuardar, almacenes = 
                 onChange={(e) => handleChange('cantidad', e.target.value)}
               />
               <select className={styles.selectUnidad} value={form.unidad} onChange={(e) => handleChange('unidad', e.target.value)}>
-                {['kg', 'lb', 'unidades', 'cajas'].map((u) => <option key={u} value={u}>{u}</option>)}
+                {unidadesOpciones.map((u) => <option key={u} value={u}>{u}</option>)}
               </select>
             </div>
           </div>
-          {select('Proveedor', 'proveedor', proveedoresOpciones)}
-          {select('Punto de venta', 'puntoVenta', puntosVentaOpciones)}
-          {campo('Fecha Entrega (Proveedor)', 'fechaEntrega', 'date')}
-          {select('Almacén a entregar', 'almacen', almacenes)}
-          {select('Transporte a cargo', 'transporte', transporteOpciones)}
-          {campo('Fecha de recoleccion de transporte', 'fechaRecoleccion', 'date')}
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Punto de venta *</label>
+            <select
+              className={`${styles.select} ${errores.puntoVenta ? styles.inputError : ''}`}
+              value={form.puntoVenta}
+              onChange={(e) => handleChange('puntoVenta', e.target.value)}
+            >
+              <option value="">— Seleccionar punto de venta —</option>
+              {puntosVenta.map((p) => (
+                <option key={p.id} value={p.nombre}>{p.nombre}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Fecha de entrega (proveedor)</label>
+            <input
+              type="date"
+              className={styles.input}
+              value={form.fechaEntrega}
+              onChange={(e) => handleChange('fechaEntrega', e.target.value)}
+            />
+          </div>
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Almacén a entregar *</label>
+            <select
+              className={`${styles.select} ${errores.almacen ? styles.inputError : ''}`}
+              value={form.almacen}
+              onChange={(e) => handleChange('almacen', e.target.value)}
+            >
+              <option value="">— Seleccionar almacén —</option>
+              {almacenes.map((a) => <option key={a.id} value={a.nombre}>{a.nombre}</option>)}
+            </select>
+          </div>
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Transporte a cargo *</label>
+            <select
+              className={`${styles.select} ${errores.transporte ? styles.inputError : ''}`}
+              value={form.transporte}
+              onChange={(e) => handleChange('transporte', e.target.value)}
+            >
+              <option value="">— Seleccionar transporte —</option>
+              {transportes.map((t) => (
+                <option key={t.id} value={t.nombre}>{t.nombre} ({t.tipo})</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.fila}>
+            <label className={styles.label}>Fecha de recolección</label>
+            <input
+              type="date"
+              className={styles.input}
+              value={form.fechaRecoleccion}
+              onChange={(e) => handleChange('fechaRecoleccion', e.target.value)}
+            />
+          </div>
+
         </div>
       </div>
       <div className={styles.botones}>

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'entregas_recolecciones_data';
+const SYNC_EVENT = 'sync_entregas';
 
 const initialData = {
   entregas: [],
@@ -18,15 +19,22 @@ function cargar() {
 
 function guardar(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  window.dispatchEvent(new Event(SYNC_EVENT));
 }
 
 export function useEntregas() {
   const [data, setData] = useState(cargar);
 
+  useEffect(() => {
+    const sync = () => setData(cargar());
+    window.addEventListener(SYNC_EVENT, sync);
+    return () => window.removeEventListener(SYNC_EVENT, sync);
+  }, []);
+
   const mutate = (fn) => {
     setData((prev) => {
       const next = fn(prev);
-      guardar(next);
+      queueMicrotask(() => guardar(next));
       return next;
     });
   };

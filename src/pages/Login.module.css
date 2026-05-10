@@ -114,3 +114,73 @@
   text-align: center;
   margin-top: 4px;
 }
+
+/* Role quick-access */
+.rolesDivider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 6px;
+  color: #999;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+.rolesDivider::before,
+.rolesDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.rolesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btnRol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid #d8d8d8;
+  border-left: 4px solid #ccc;
+  background: #fafafa;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.btnRol:hover {
+  background: #f0f4ff;
+  border-color: #1a3a8c;
+}
+
+.rolTitulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.5px;
+}
+
+.rolDesc {
+  font-size: 10px;
+  color: #777;
+}
+
+.btnRolAdmin {
+  border-left-color: #1a3a8c;
+}
+
+.btnRolTransporte {
+  border-left-color: #e65100;
+}
+
+.btnRolAlmacen {
+  border-left-color: #2e7d32;
+}

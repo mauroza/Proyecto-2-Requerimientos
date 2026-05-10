@@ -1,31 +1,36 @@
 import { useState } from 'react';
 import styles from './CrearPedido.module.css';
 
-const productosOpciones = ['Yuca', 'Piña', 'Banano', 'Papaya', 'Mango'];
-const proveedoresOpciones = ['COLONO', 'AGROSANCARLOS', 'COOPEAGRI', 'DOS PINOS'];
-const puntosVentaOpciones = ['Punto SJ', 'Punto Pital', 'Punto Liberia', 'Punto Cartago'];
-const transporteOpciones = ['Mario Fernandez Hernandez', 'Carlos Mora Jimenez', 'Luis Rojas Vargas'];
 const unidadesOpciones = ['kg', 'lb', 'unidades', 'cajas'];
 
 const PASOS = [
-  { titulo: 'Información básica', campos: ['nombre', 'producto'] },
-  { titulo: 'Cantidad y proveedor', campos: ['cantidad', 'proveedor'] },
+  { titulo: 'Proveedor y nombre', campos: ['nombre', 'proveedorId'] },
+  { titulo: 'Producto y cantidad', campos: ['producto', 'cantidad'] },
   { titulo: 'Punto de venta y entrega', campos: ['puntoVenta', 'fechaEntrega'] },
   { titulo: 'Logística', campos: ['almacen', 'transporte', 'fechaRecoleccion'] },
 ];
 
-export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes = [] }) {
+export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes = [], proveedores = [], puntosVenta = [], transportes = [] }) {
   const [paso, setPaso] = useState(0);
   const [form, setForm] = useState({
-    nombre: '', producto: '', cantidad: '', unidad: 'kg',
-    proveedor: '', puntoVenta: '', fechaEntrega: '',
+    nombre: '', proveedorId: '', producto: '',
+    cantidad: '', unidad: 'kg',
+    puntoVenta: '', fechaEntrega: '',
     almacen: '', transporte: '', fechaRecoleccion: '',
   });
   const [errores, setErrores] = useState({});
 
+  const proveedorActual = proveedores.find((p) => p.id === Number(form.proveedorId));
+  const productosDisponibles = proveedorActual?.productosSuministrados ?? [];
+
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrores((prev) => ({ ...prev, [field]: false }));
+  };
+
+  const handleProveedorChange = (id) => {
+    setForm((prev) => ({ ...prev, proveedorId: id, producto: '' }));
+    setErrores((prev) => ({ ...prev, proveedorId: false, producto: false }));
   };
 
   const validarPaso = () => {
@@ -56,13 +61,14 @@ export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes
       id: totalPedidos + 1,
       nombre: form.nombre.toUpperCase(),
       fecha: new Date().toLocaleDateString('es-CR').replace(/\//g, '-'),
-      proveedor: form.proveedor,
+      proveedor: proveedorActual?.nombre ?? form.proveedorId,
       estado: 'EN RECOLECCION',
       estadoKey: 'recoleccion',
       checked: false,
       producto: form.producto,
       cantidad: `${form.cantidad} ${form.unidad}`,
       puntoVenta: form.puntoVenta,
+      fechaEntrega: form.fechaEntrega,
       transportista: form.transporte,
       fechaRecoleccion: form.fechaRecoleccion,
       almacen: form.almacen,
@@ -80,36 +86,29 @@ export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes
       </div>
       <hr className={styles.divider} />
 
-      {/* Barra de progreso */}
       <div className={styles.progresoWrapper}>
         {PASOS.map((p, i) => (
           <div key={i} className={styles.pasoItem}>
             <div className={`${styles.circulo} ${i < paso ? styles.circuloHecho : ''} ${i === paso ? styles.circuloActivo : ''}`}>
               {i < paso ? '✓' : i + 1}
             </div>
-            <span className={`${styles.pasoLabel} ${i === paso ? styles.pasoLabelActivo : ''}`}>
-              {p.titulo}
-            </span>
+            <span className={`${styles.pasoLabel} ${i === paso ? styles.pasoLabelActivo : ''}`}>{p.titulo}</span>
             {i < PASOS.length - 1 && (
-              <div className={`${styles.lineaConector} ${i < paso ? styles.lineaHecha : ''}`}></div>
+              <div className={`${styles.lineaConector} ${i < paso ? styles.lineaHecha : ''}`} />
             )}
           </div>
         ))}
       </div>
 
-      {/* Contenido del paso */}
       <div className={styles.pasoContenido}>
-        <h2 className={styles.pasoTitulo}>
-          Paso {paso + 1} — {PASOS[paso].titulo}
-        </h2>
-
+        <h2 className={styles.pasoTitulo}>Paso {paso + 1} — {PASOS[paso].titulo}</h2>
         <div className={styles.form}>
 
-          {/* Paso 1 */}
+          {/* Paso 1: Nombre y proveedor */}
           {paso === 0 && (
             <>
               <div className={styles.fila}>
-                <label className={styles.label}>Nombre del pedido</label>
+                <label className={styles.label}>Nombre del pedido *</label>
                 <input
                   type="text"
                   className={`${styles.input} ${errores.nombre ? styles.inputError : ''}`}
@@ -119,24 +118,53 @@ export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes
                 />
               </div>
               <div className={styles.fila}>
-                <label className={styles.label}>Agregar productos</label>
+                <label className={styles.label}>Proveedor *</label>
                 <select
-                  className={`${styles.select} ${errores.producto ? styles.inputError : ''}`}
-                  value={form.producto}
-                  onChange={(e) => handleChange('producto', e.target.value)}
+                  className={`${styles.select} ${errores.proveedorId ? styles.inputError : ''}`}
+                  value={form.proveedorId}
+                  onChange={(e) => handleProveedorChange(e.target.value)}
                 >
-                  <option value="">seleccionar producto</option>
-                  {productosOpciones.map((o) => <option key={o} value={o}>{o}</option>)}
+                  <option value="">— Seleccionar proveedor —</option>
+                  {proveedores.map((p) => (
+                    <option key={p.id} value={p.id}>{p.nombre}</option>
+                  ))}
                 </select>
+                {proveedorActual && (
+                  <p className={styles.infoProveedor}>
+                    Contacto: {proveedorActual.contacto} · {proveedorActual.telefono}
+                    {proveedorActual.productosSuministrados.length > 0
+                      ? ` · Productos: ${proveedorActual.productosSuministrados.join(', ')}`
+                      : ' · Sin productos registrados'}
+                  </p>
+                )}
               </div>
             </>
           )}
 
-          {/* Paso 2 */}
+          {/* Paso 2: Producto y cantidad */}
           {paso === 1 && (
             <>
               <div className={styles.fila}>
-                <label className={styles.label}>Cantidad de productos</label>
+                <label className={styles.label}>Producto *</label>
+                {productosDisponibles.length > 0 ? (
+                  <select
+                    className={`${styles.select} ${errores.producto ? styles.inputError : ''}`}
+                    value={form.producto}
+                    onChange={(e) => handleChange('producto', e.target.value)}
+                  >
+                    <option value="">— Seleccionar producto —</option>
+                    {productosDisponibles.map((p) => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className={styles.sinProductos}>
+                    El proveedor seleccionado no tiene productos registrados. Edítelo en el módulo Proveedores.
+                  </p>
+                )}
+              </div>
+              <div className={styles.fila}>
+                <label className={styles.label}>Cantidad *</label>
                 <div className={styles.cantidadGroup}>
                   <input
                     type="number"
@@ -155,36 +183,27 @@ export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes
                   </select>
                 </div>
               </div>
-              <div className={styles.fila}>
-                <label className={styles.label}>Proveedor</label>
-                <select
-                  className={`${styles.select} ${errores.proveedor ? styles.inputError : ''}`}
-                  value={form.proveedor}
-                  onChange={(e) => handleChange('proveedor', e.target.value)}
-                >
-                  <option value="">seleccionar proveedor</option>
-                  {proveedoresOpciones.map((o) => <option key={o} value={o}>{o}</option>)}
-                </select>
-              </div>
             </>
           )}
 
-          {/* Paso 3 */}
+          {/* Paso 3: Punto de venta */}
           {paso === 2 && (
             <>
               <div className={styles.fila}>
-                <label className={styles.label}>Punto de venta</label>
+                <label className={styles.label}>Punto de venta *</label>
                 <select
                   className={`${styles.select} ${errores.puntoVenta ? styles.inputError : ''}`}
                   value={form.puntoVenta}
                   onChange={(e) => handleChange('puntoVenta', e.target.value)}
                 >
-                  <option value="">seleccionar punto</option>
-                  {puntosVentaOpciones.map((o) => <option key={o} value={o}>{o}</option>)}
+                  <option value="">— Seleccionar punto de venta —</option>
+                  {puntosVenta.map((p) => (
+                    <option key={p.id} value={p.nombre}>{p.nombre}</option>
+                  ))}
                 </select>
               </div>
               <div className={styles.fila}>
-                <label className={styles.label}>Fecha Entrega (Proveedor)</label>
+                <label className={styles.label}>Fecha de entrega (proveedor) *</label>
                 <input
                   type="date"
                   className={`${styles.input} ${errores.fechaEntrega ? styles.inputError : ''}`}
@@ -195,33 +214,35 @@ export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes
             </>
           )}
 
-          {/* Paso 4 */}
+          {/* Paso 4: Logística */}
           {paso === 3 && (
             <>
               <div className={styles.fila}>
-                <label className={styles.label}>Almacén a entregar</label>
+                <label className={styles.label}>Almacén a entregar *</label>
                 <select
                   className={`${styles.select} ${errores.almacen ? styles.inputError : ''}`}
                   value={form.almacen}
                   onChange={(e) => handleChange('almacen', e.target.value)}
                 >
-                  <option value="">seleccionar almacén</option>
+                  <option value="">— Seleccionar almacén —</option>
                   {almacenes.map((a) => <option key={a.id} value={a.nombre}>{a.nombre}</option>)}
                 </select>
               </div>
               <div className={styles.fila}>
-                <label className={styles.label}>Transporte a cargo</label>
+                <label className={styles.label}>Transporte a cargo *</label>
                 <select
                   className={`${styles.select} ${errores.transporte ? styles.inputError : ''}`}
                   value={form.transporte}
                   onChange={(e) => handleChange('transporte', e.target.value)}
                 >
-                  <option value="">seleccionar transporte</option>
-                  {transporteOpciones.map((o) => <option key={o} value={o}>{o}</option>)}
+                  <option value="">— Seleccionar transporte —</option>
+                  {transportes.map((t) => (
+                    <option key={t.id} value={t.nombre}>{t.nombre} ({t.tipo})</option>
+                  ))}
                 </select>
               </div>
               <div className={styles.fila}>
-                <label className={styles.label}>Fecha de recoleccion de transporte</label>
+                <label className={styles.label}>Fecha de recolección *</label>
                 <input
                   type="date"
                   className={`${styles.input} ${errores.fechaRecoleccion ? styles.inputError : ''}`}
@@ -235,19 +256,14 @@ export default function CrearPedido({ onVolver, onCrear, totalPedidos, almacenes
         </div>
       </div>
 
-      {/* Botones de navegación */}
       <div className={styles.botones}>
         <button className={styles.btnVolver} onClick={paso === 0 ? onVolver : handleAtras}>
           {paso === 0 ? 'VOLVER' : 'ATRÁS'}
         </button>
         {!esUltimoPaso ? (
-          <button className={styles.btnSiguiente} onClick={handleSiguiente}>
-            SIGUIENTE →
-          </button>
+          <button className={styles.btnSiguiente} onClick={handleSiguiente}>SIGUIENTE →</button>
         ) : (
-          <button className={styles.btnCrear} onClick={handleCrear}>
-            CREAR PEDIDO
-          </button>
+          <button className={styles.btnCrear} onClick={handleCrear}>CREAR PEDIDO</button>
         )}
       </div>
     </div>

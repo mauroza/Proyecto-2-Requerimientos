@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'almacenes_data';
+const SYNC_EVENT = 'sync_almacenes';
 
 const initialAlmacenes = [
   {
@@ -55,15 +56,22 @@ function cargar() {
 
 function guardar(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  window.dispatchEvent(new Event(SYNC_EVENT));
 }
 
 export function useAlmacenes() {
   const [almacenes, setAlmacenesState] = useState(cargar);
 
+  useEffect(() => {
+    const sync = () => setAlmacenesState(cargar());
+    window.addEventListener(SYNC_EVENT, sync);
+    return () => window.removeEventListener(SYNC_EVENT, sync);
+  }, []);
+
   const setAlmacenes = (fn) => {
     setAlmacenesState((prev) => {
       const siguiente = typeof fn === 'function' ? fn(prev) : fn;
-      guardar(siguiente);
+      queueMicrotask(() => guardar(siguiente));
       return siguiente;
     });
   };

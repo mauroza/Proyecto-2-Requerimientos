@@ -1,21 +1,35 @@
 import { useState } from 'react';
 import styles from './Login.module.css';
 
-const USUARIO = 'admin@distribucion.com';
-const PASSWORD = 'admin123';
+const USUARIOS = {
+  'admin@distribucion.com':       { password: 'admin123',     role: 'admin',       nombre: 'Administrador',  email: 'admin@distribucion.com' },
+  'transporte@distribucion.com':  { password: 'transporte123', role: 'transporte',  nombre: 'Mario Fernández (Transportista)', email: 'transporte@distribucion.com' },
+  'almacen@distribucion.com':     { password: 'almacen123',   role: 'almacen',     nombre: 'Laura Mora (Almacenista)', email: 'almacen@distribucion.com' },
+};
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
 
-  const handleLogin = () => {
-    if (email.toLowerCase() === USUARIO && password === PASSWORD) {
+  const intentar = (correo, contra) => {
+    const u = USUARIOS[correo.toLowerCase()];
+    if (u && u.password === contra) {
       setError(false);
-      onLogin();
-    } else {
-      setError(true);
+      onLogin({ role: u.role, nombre: u.nombre, email: u.email });
+      return true;
     }
+    setError(true);
+    return false;
+  };
+
+  const handleLogin = () => intentar(email, password);
+
+  const handleQuick = (correo) => {
+    const u = USUARIOS[correo];
+    setEmail(u.email);
+    setPassword(u.password);
+    intentar(u.email, u.password);
   };
 
   const handleKeyDown = (e) => {
@@ -63,9 +77,36 @@ export default function Login({ onLogin }) {
               INGRESAR
             </button>
 
-            <p className={styles.hint}>
-              Usuario: admin@distribucion.com &nbsp;|&nbsp; Contraseña: admin123
-            </p>
+            <div className={styles.rolesDivider}>
+              <span>ACCESO RÁPIDO POR ROL</span>
+            </div>
+
+            <div className={styles.rolesGrid}>
+              <button
+                type="button"
+                className={`${styles.btnRol} ${styles.btnRolAdmin}`}
+                onClick={() => handleQuick('admin@distribucion.com')}
+              >
+                <span className={styles.rolTitulo}>ADMINISTRADOR</span>
+                <span className={styles.rolDesc}>Acceso completo al sistema</span>
+              </button>
+              <button
+                type="button"
+                className={`${styles.btnRol} ${styles.btnRolTransporte}`}
+                onClick={() => handleQuick('transporte@distribucion.com')}
+              >
+                <span className={styles.rolTitulo}>TRANSPORTISTA</span>
+                <span className={styles.rolDesc}>Recoger y entregar pedidos</span>
+              </button>
+              <button
+                type="button"
+                className={`${styles.btnRol} ${styles.btnRolAlmacen}`}
+                onClick={() => handleQuick('almacen@distribucion.com')}
+              >
+                <span className={styles.rolTitulo}>ALMACENISTA</span>
+                <span className={styles.rolDesc}>Recibir y gestionar inventario</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

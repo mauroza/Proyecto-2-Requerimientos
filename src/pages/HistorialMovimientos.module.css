@@ -165,3 +165,23 @@
   padding: 32px;
   font-size: 12px;
 }
+
+/* Recolecciones specific columns */
+.vendidoVal {
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.sobranteVal {
+  font-weight: 700;
+  color: #e65100;
+}
+
+.sobranteZero {
+  color: #aaa;
+}
+
+.gananciasVal {
+  font-weight: 700;
+  color: #1a3a8c;
+}

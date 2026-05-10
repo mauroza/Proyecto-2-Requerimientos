@@ -1,0 +1,23 @@
+.container { flex: 1; background: #f4f6fb; margin: 20px; border-radius: 4px; padding: 32px 36px; box-shadow: 0 2px 8px rgba(0,0,0,.07); display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
+.header { display: flex; justify-content: space-between; align-items: center; }
+.title { font-size: 26px; font-weight: 700; color: #1a1a1a; letter-spacing: 1px; margin: 0; }
+.fecha { font-size: 12px; color: #888; }
+.kpiRow { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.kpi { background: #fff; border-radius: 4px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.kpiValor { font-size: 26px; font-weight: 700; color: #1a1a1a; }
+.kpiTitulo { font-size: 10px; font-weight: 700; color: #888; letter-spacing: .5px; margin-top: 2px; }
+.kpiSub { font-size: 11px; color: #aaa; margin-top: 4px; }
+.graficosGrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.graficoCard { background: #fff; border-radius: 4px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.graficoTitulo { font-size: 12px; font-weight: 700; color: #444; letter-spacing: .5px; margin: 0 0 14px; text-transform: uppercase; }
+.graficoBody { }
+.sinDatos { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 12px; color: #bbb; font-style: italic; }
+.resumenTabla { background: #fff; border-radius: 4px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.tabla { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+.tabla thead { background: #e8e8e8; }
+.tabla th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: #444; border-bottom: 1px solid #d0d0d0; }
+.tabla td { padding: 10px 14px; border-bottom: 1px solid #ebebeb; color: #333; }
+.tabla tbody tr:hover { background: #f9f9f9; }
+.verde { color: #2e7d32; font-weight: 700; }
+.morado { color: #6a1b9a; font-weight: 700; }
+@media (max-width: 900px) { .graficosGrid2 { grid-template-columns: 1fr; } .kpiRow { grid-template-columns: repeat(2, 1fr); } }

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'inventarios_data';
+const SYNC_EVENT = 'sync_inventarios';
 
 const initialInventariosData = {
   1: [],
@@ -19,15 +20,22 @@ function cargar() {
 
 function guardar(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  window.dispatchEvent(new Event(SYNC_EVENT));
 }
 
 export function useInventarios() {
   const [inventarios, setInventariosState] = useState(cargar);
 
+  useEffect(() => {
+    const sync = () => setInventariosState(cargar());
+    window.addEventListener(SYNC_EVENT, sync);
+    return () => window.removeEventListener(SYNC_EVENT, sync);
+  }, []);
+
   const setInventarios = (fn) => {
     setInventariosState((prev) => {
       const siguiente = typeof fn === 'function' ? fn(prev) : fn;
-      guardar(siguiente);
+      queueMicrotask(() => guardar(siguiente));
       return siguiente;
     });
   };
@@ -55,6 +63,28 @@ export function useInventarios() {
     }));
   };
 
+  const devolverProductos = (almacenId, productosADevolver) => {
+    setInventarios((prev) => {
+      const actual = [...(prev[almacenId] || [])];
+      productosADevolver.forEach((p) => {
+        if (!p.sobrante || p.sobrante <= 0) return;
+        const idx = actual.findIndex((item) => item.id === p.id);
+        if (idx >= 0) {
+          actual[idx] = { ...actual[idx], cantidad: actual[idx].cantidad + p.sobrante };
+        } else {
+          actual.push({
+            id: p.id,
+            nombre: p.nombre,
+            cantidad: p.sobrante,
+            fechaIngreso: new Date().toLocaleDateString('es-CR').replace(/\//g, '-'),
+            proveedor: '',
+          });
+        }
+      });
+      return { ...prev, [almacenId]: actual };
+    });
+  };
+
   const descontarProductos = (almacenId, productosADescontar) => {
     setInventarios((prev) => {
       const inventarioActual = prev[almacenId] || [];
@@ -78,6 +108,7 @@ export function useInventarios() {
     eliminarProducto,
     editarProducto,
     descontarProductos,
+    devolverProductos,
     setInventarios
   };
 }

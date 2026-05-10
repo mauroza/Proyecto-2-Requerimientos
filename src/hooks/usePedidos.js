@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const STORAGE_KEY = 'pedidos_data';
+const SYNC_EVENT = 'sync_pedidos';
 
 const initialPedidos = [
   {
@@ -48,15 +49,22 @@ function cargarPedidos() {
 
 function guardarPedidos(pedidos) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(pedidos));
+  window.dispatchEvent(new Event(SYNC_EVENT));
 }
 
 export function usePedidos() {
   const [pedidos, setPedidosState] = useState(cargarPedidos);
 
+  useEffect(() => {
+    const sync = () => setPedidosState(cargarPedidos());
+    window.addEventListener(SYNC_EVENT, sync);
+    return () => window.removeEventListener(SYNC_EVENT, sync);
+  }, []);
+
   const setPedidos = (fn) => {
     setPedidosState((prev) => {
       const siguiente = typeof fn === 'function' ? fn(prev) : fn;
-      guardarPedidos(siguiente);
+      queueMicrotask(() => guardarPedidos(siguiente));
       return siguiente;
     });
   };
